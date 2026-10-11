@@ -7,6 +7,9 @@
 
 local function stringify(x) return pandoc.utils.stringify(x) end
 
+-- Set by build.py --telu: emit the Telkom University template's chapter commands.
+TELU = os.getenv("THESIS_TELU") == "1"
+
 -- Header numbering --------------------------------------------------------
 local function strip_number(header)
   local text = stringify(header.content)
@@ -16,6 +19,17 @@ local function strip_number(header)
   if num then
     header.content = pandoc.Inlines(rest)
     header.identifier = "sec:" .. num
+  end
+  -- TelU template: chapters are "BAB III / METHODOLOGY" pages, appendices "LAMPIRAN A".
+  if TELU and header.level == 1 and num then
+    local title = pandoc.utils.stringify(header.content):upper()
+    if num:match("^%d+$") then
+      local romans = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" }
+      return pandoc.RawBlock("latex", string.format(
+        "\\telubab{%s}{BAB %s}{%s}{sec:%s}", num, romans[tonumber(num)], title, num))
+    end
+    return pandoc.RawBlock("latex", string.format(
+      "\\telubab{%d}{LAMPIRAN %s}{%s}{sec:%s}", num:byte() - 64, num, title, num))
   end
   return header
 end

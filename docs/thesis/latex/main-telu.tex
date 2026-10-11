@@ -1,0 +1,81 @@
+% Needle thesis in the Telkom University TA layout (telu_final_project.cls).
+% Compile with XeLaTeX (the class uses fontspec). Chapters are generated:
+% edit ../chapters/*.md, then run `python build.py --telu`.
+% The cover, approval sheet and originality statement come from the faculty's
+% official Word template; abstrak starts at page iii as in the template.
+\documentclass{telu_final_project}
+\usepackage[english]{babel}
+\usepackage[table]{xcolor}
+\usepackage{indentfirst}
+\usepackage{tocbibind}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{fvextra}
+\fvset{breaklines=true,breakanywhere=true,fontsize=\small}
+\usepackage{newunicodechar}
+\usepackage[hidelinks]{hyperref}
+
+\usepackage[a4paper, left=4cm, top=3cm, bottom=3cm, right=3cm]{geometry}
+
+% Macros that pandoc output expects.
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newcounter{none} % pandoc's \LTcaptype{none} steps this instead of the table counter
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi}
+\makeatother
+\setlength{\emergencystretch}{3em}
+\setlength{\tabcolsep}{6pt} % the class's 10pt is too wide for the 8-column results tables
+\renewcommand{\arraystretch}{1.2}
+
+% Unicode symbols used in the drafts, typeset as math.
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{⁻}{\textsuperscript{\ensuremath{-}}}
+\newunicodechar{✓}{\ensuremath{\checkmark}}
+\newunicodechar{⁵}{\textsuperscript{5}}
+\newunicodechar{ρ}{\ensuremath{\rho}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+
+\title{Rewarding the Evidence, Not Just the Answer: Verifiable Evidence-Grounded Rewards for Training Search Agents with GRPO}
+\author{Emirsyah}
+
+\begin{document}
+\pagenumbering{roman}
+
+\abstrak{%
+    [TODO: abstract, written last; see the abstract notes in docs/thesis/outline.md.]
+}{%
+    search agents, reinforcement learning, GRPO, reward design, evidence grounding, multi-hop question answering
+}%
+
+\addalllist{}
+\pagenumbering{arabic}
+
+\input{chapters-telu/ch1-introduction}
+\input{chapters-telu/ch2-literature-review}
+\input{chapters-telu/ch3-methodology}
+\input{chapters-telu/ch4-results}
+
+\renewcommand{\thesection}{\Alph{section}}
+\input{chapters-telu/appendix-a-prompt}
+
+\end{document}
