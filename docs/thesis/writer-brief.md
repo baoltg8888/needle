@@ -113,8 +113,8 @@ Invalid episode → **−1**. A "gold fact" is a HotpotQA supporting fact (title
 
 ### Compute
 - RunPod **NVIDIA L40S 48 GB**, ~$1.10/h. One run (train + holdout eval) takes ≈ 2.05 h ≈ **$2.25**.
-- Software: Python 3.11, PyTorch 2.11.0+cu128 for the batch runs (B0 and R1 s7 used 2.14.1+cu130; note this as a limitation), transformers 4.57.6, PEFT 0.21.2.
-- Total project budget ≈ $45.
+- Software: Python 3.11, transformers 4.57.6, PEFT 0.21.2. PyTorch differs by run: B0 and R1 s7 ran on an earlier pod with **2.14.1+cu130**; all later batch runs used **2.11.0+cu128**, because that pod's driver supported only CUDA 12.8 (`logs/2026-10-10-r0-r1-r2-batch.md`). The older version number is on the newer runs; this is correct, not a typo. Note it as a limitation.
+- Total project budget ≈ $45: the original plan was ~$30 (`docs/plans/2026-10-03-research-completion-plan.md`), extended by +$15 for the fixes batch ("Medium tier", `logs/2026-10-11-fixes-batch.md`). The final spend goes in the cost table [TODO].
 - Training is offline: local weights only, Hugging Face offline mode.
 
 ---
@@ -149,7 +149,7 @@ EM (all) counts failures as 0. Other columns are means over completed episodes.
 |---|---|---|
 | R0 s7 − B0 | +19.7 | [+14.3, +25.0] |
 | R0 s8 − B0 | +18.3 | [+13.3, +23.3] |
-| R1 s7 − B0 | +20.3 | [+15.0, +25.7] (5k resamples) |
+| R1 s7 − B0 | +20.3 | [+15.0, +25.7] (5k resamples; [TODO: recompute at 10k with the seed-9 batch]) |
 | R1 s8 − B0 | +20.3 | [+15.0, +25.3] |
 | R2 s7 − B0 | +18.7 | [+13.7, +24.0] |
 | R2 s8 − B0 | +26.3 | [+21.0, +31.7] |
@@ -158,7 +158,9 @@ EM (all) counts failures as 0. Other columns are means over completed episodes.
 | R2 s7 − R1 s7 | −1.7 | [−7.0, +3.7] |
 | R2 s8 − R1 s8 | +6.0 | [+1.3, +10.7] |
 
-Seed-9 CIs are PENDING; they will be computed together with the fixes batch.
+Seed-9 CIs are PENDING; they will be computed together with the fixes batch. At that point, also recompute R1 s7 − B0 at 10k resamples so the whole table uses the same setting.
+
+**R2 s8 − R1 s8 (+6.0, CI excludes 0)** is the only reward-variant comparison whose CI excludes 0, and it **did not replicate** on seeds 7 and 9 (see 4.5 point 3). Always present it as a single-seed effect, never as evidence that R2 is better.
 
 ### 4.3 Failure counts (episodes not completed: evidence / protocol / budget)
 B0 85/37/8 · R0 s7 14/7/1 · R0 s8 0/1/0 · R1 s7 8/5/0 · R1 s8 8/5/0 · R2 s7 10/7/0 · R2 s8 3/7/0 · R1 s9 7 total · R2 s9 14 total.
@@ -178,7 +180,8 @@ Here "evidence" mostly means invented or unretrievable citations.
 2. **RQ2: same accuracy, different grounding.** R0 ≈ R1 on EM, but every R0 vs. R1 CI includes 0. R0 drifts into shortcuts that depend on the seed. R1 is stable: EM 42.7–45.3 and precision 0.73–0.75 across 3 seeds. In short: *reward the evidence, not just the answer.*
 3. **R2 is not better than R1.** Seed 8 looked like a +6 win (CI excluded 0), but seeds 7 (−1.7) and 9 (38.3% vs. R1's 45.3%) reverse it, and the 3-seed means are 42.7% vs. 43.6%. This is a textbook case of single-seed results misleading (Henderson 2018; Agarwal 2021) and directly supports G4.
 4. **Seed variance is large,** up to ~10 EM points for R2. Do not claim method differences smaller than ~6 points.
-5. **Evidence coverage is the open problem.** The summed reward lets the policy settle for "precise but incomplete" citations (cf. ALCE).
+5. **Evidence coverage is the open problem.** The summed reward lets the policy settle for "precise but incomplete" citations (cf. ALCE). Coverage also varies with the seed: R1 s9 has the best EM (45.3%) but the lowest coverage (0.333, vs. 0.473 and 0.513). So coverage is not a fixed property of VEGR, and higher EM does not imply better coverage.
+6. **Expect Grounded EM to be well below EM for every run, R1 included.** It requires *every* citation to be gold, and R1's citation precision is only ~0.73–0.75. R0 s8 will be 0 by construction, since it cites nothing. Frame the result as "VEGR raises grounded EM relative to R0", not "VEGR answers are fully grounded". [TODO: fill in when the numbers land.]
 
 ### 4.6 PENDING (queue finishes ~12:30 WIB 2026-10-12)
 - R0 seed 9: does the shortcut happen again?
@@ -213,6 +216,8 @@ Here "evidence" mostly means invented or unretrievable citations.
 | Yao et al., ReAct | ICLR 2023 (K) | agent loop |
 | Qwen Team, Qwen2.5 | tech report 2024 (K) | base model |
 | CaRR / C-GRPO; STAMP; CIGPO (2607.16244); AMRP (2609.00213); Search-R1++ (2602.19526) | 2026 preprints | cite as preprints only; supporting, not core |
+
+**Venue verification [TODO before submission]:** only AutoRefine and DeepSeek-R1 are confirmed (C). Every (K) entry must be checked against DBLP or the publisher page. Search-R1 (COLM), Dr. GRPO (COLM) and DAPO (NeurIPS) are the most likely to be wrong. If a venue can't be confirmed, cite the arXiv version.
 
 More notes: `docs/research/2026-10-03-related-work-and-directions.md`, `2026-10-11-results-diagnosis-and-improvements.md`, `2026-10-11-peer-reviewed-grounding-and-budget-plan.md`.
 
