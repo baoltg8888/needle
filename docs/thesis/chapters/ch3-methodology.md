@@ -16,7 +16,16 @@ Each training episode follows the same loop (Figure 3.1):
 4. When the episode ends, the reward function scores it against HotpotQA's gold answer and gold supporting facts.
 5. GRPO compares the rewards of 8 episodes on the same question and updates the LoRA adapter.
 
-`[FIGURE 3.1: System diagram — question → agent (Qwen2.5-7B + LoRA) → SEARCH/ANSWER → SearchEnvironment (BM25) → VEGR reward → GRPO update]`
+![Figure 3.1](../figures/fig3_1_system.png)
+
+**Figure 3.1.** One training step:
+
+1. The agent receives a HotpotQA question and takes up to 3 `SEARCH` actions over the question's 10 paragraphs.
+2. It ends with `ANSWER[a] CITATIONS[title|index; …]`.
+3. The finished episode is scored by VEGR against the gold answer and supporting facts.
+4. GRPO compares the rewards of 8 such episodes on the same question and updates the LoRA adapter.
+
+Drawn by `scripts/make_thesis_figures.py`.
 
 Three research questions guide the design (Chapter 1):
 
