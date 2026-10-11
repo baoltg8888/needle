@@ -1,0 +1,35 @@
+{
+    "schema_version": 1,
+    "name": "r0_dynsample_seed8",
+    "description": "R0 + DAPO dynamic sampling: outcome-only reward, zero-variance groups do not count; draws from up to 512 questions until 256 optimizer updates. Seed 8 (the seed whose R0 run dropped citations).",
+    "base_model": "Qwen/Qwen2.5-7B-Instruct",
+    "seed": 8,
+    "num_train_examples": 512,
+    "group_size": 8,
+    "epochs": 1,
+    "learning_rate": 2e-05,
+    "epsilon": 0.2,
+    "max_grad_norm": 1.0,
+    "train_on_invalid": true,
+    "dynamic_sampling_target_updates": 256,
+    "save_every": 32,
+    "dtype": "bfloat16",
+    "gradient_checkpointing": true,
+    "generation": {"max_new_tokens": 128, "do_sample": true, "temperature": 1.0, "top_p": 1.0},
+    "lora": {
+        "r": 16,
+        "lora_alpha": 32,
+        "lora_dropout": 0.0,
+        "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+    },
+    "environment": {"top_k": 3, "max_searches": 3},
+    "reward": {
+        "answer_exact_match_weight": 1.0,
+        "answer_f1_weight": 0.0,
+        "evidence_coverage_weight": 0.0,
+        "citation_precision_weight": 0.0,
+        "retrieval_recall_weight": 0.0,
+        "search_cost_weight": 0.0,
+        "duplicate_query_penalty_weight": 0.0
+    }
+}

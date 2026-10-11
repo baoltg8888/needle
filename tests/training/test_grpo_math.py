@@ -79,6 +79,13 @@ def test_empty_action_mask_is_rejected():
 
 def test_zero_variance_group_has_zero_advantages():
     assert group_advantages([0.3, 0.3, 0.3]) == [0.0, 0.0, 0.0]
+    assert group_advantages([0.3, 0.3], normalize_std=False) == [0.0, 0.0]
+
+
+def test_mean_only_advantages_skip_std_division():
+    assert group_advantages([1.0, 0.0, 0.0, 0.0], normalize_std=False) == pytest.approx(
+        [0.75, -0.25, -0.25, -0.25]
+    )
 
 
 def _trace():

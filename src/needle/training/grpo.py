@@ -23,10 +23,12 @@ ADVANTAGE_EPSILON = 1e-6
 LogProbFn = Callable[[TokenTrace], torch.Tensor]
 
 
-def group_advantages(rewards: Sequence[float]) -> list[float]:
+def group_advantages(rewards: Sequence[float], *, normalize_std: bool = True) -> list[float]:
     """Normalize rewards within one group: ``(r - mean) / (std + eps)``.
 
     Uses the population standard deviation. A zero-variance group yields all zeros.
+    With ``normalize_std=False`` the advantage is ``r - mean`` (Dr. GRPO, Liu et al. 2025),
+    which stops low-variance groups from being up-weighted.
     """
     if not rewards:
         raise ValueError("rewards must be non-empty")
@@ -35,6 +37,8 @@ def group_advantages(rewards: Sequence[float]) -> list[float]:
     std = math.sqrt(sum((value - mean) ** 2 for value in values) / len(values))
     if std == 0.0:
         return [0.0] * len(values)
+    if not normalize_std:
+        return [value - mean for value in values]
     return [(value - mean) / (std + ADVANTAGE_EPSILON) for value in values]
 
 
@@ -128,7 +132,10 @@ class GroupStats:
 
 
 def score_group(
-    records: Sequence[RolloutRecord], *, train_on_invalid: bool = False
+    records: Sequence[RolloutRecord],
+    *,
+    train_on_invalid: bool = False,
+    normalize_std: bool = True,
 ) -> tuple[list[float], GroupStats]:
     """Compute advantages for one group.
 
@@ -142,7 +149,9 @@ def score_group(
         values = [float(reward) for _, reward in scored]
         reward_mean = sum(values) / len(values)
         reward_std = math.sqrt(sum((value - reward_mean) ** 2 for value in values) / len(values))
-        for (index, _), advantage in zip(scored, group_advantages(values), strict=True):
+        for (index, _), advantage in zip(
+            scored, group_advantages(values, normalize_std=normalize_std), strict=True
+        ):
             advantages[index] = advantage
     trainable = sum(
         is_trainable(record, train_on_invalid=train_on_invalid) and advantages[index] != 0.0

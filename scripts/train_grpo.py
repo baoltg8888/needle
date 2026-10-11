@@ -148,6 +148,14 @@ def train(args: argparse.Namespace) -> None:
 
     schedule = [example for _ in range(config["epochs"]) for example in examples]
     group_size = config["group_size"]
+    normalize_std = config.get("normalize_advantage_std", True)
+    # DAPO-style dynamic sampling: groups with no learning signal do not count, and the
+    # run draws further questions until this many optimizer updates have happened.
+    target_updates = config.get("dynamic_sampling_target_updates")
+    if target_updates is not None and args.resume:
+        raise SystemExit("--resume is not supported with dynamic sampling")
+    updates = 0
+    steps_done = start_step
     metrics_path = args.output_dir / "metrics.jsonl"
     rollouts_path = args.output_dir / "rollouts.jsonl"
     with (
@@ -155,13 +163,17 @@ def train(args: argparse.Namespace) -> None:
         rollouts_path.open("a", encoding="utf-8") as rollouts_file,
     ):
         for step in range(start_step, len(schedule)):
+            if target_updates is not None and updates >= target_updates:
+                break
             example = schedule[step]
             started = time.time()
             records = []
             for member in range(group_size):
                 policy.reseed(rollout_seed(config["seed"], f"{example.question_id}:{step}", member))
                 records.append(collector.collect(example))
-            advantages, stats = score_group(records, train_on_invalid=config["train_on_invalid"])
+            advantages, stats = score_group(
+                records, train_on_invalid=config["train_on_invalid"], normalize_std=normalize_std
+            )
 
             loss_value = clip_value = grad_norm = None
             ratio_drift = None
@@ -193,12 +205,14 @@ def train(args: argparse.Namespace) -> None:
                     torch.nn.utils.clip_grad_norm_(trainable, config["max_grad_norm"])
                 )
                 optimizer.step()
+                updates += 1
                 loss_value = total_loss
                 clip_value = clip_total / max(stats.trainable, 1)
                 ratio_drift = max(drifts) if drifts else None
 
             row = {
                 "step": step + 1,
+                "updates": updates,
                 "question_id": example.question_id,
                 "reward_mean": stats.reward_mean,
                 "reward_std": stats.reward_std,
@@ -221,6 +235,7 @@ def train(args: argparse.Namespace) -> None:
             for record in records:
                 rollouts_file.write(record.to_json() + "\n")
             rollouts_file.flush()
+            steps_done = step + 1
             print(
                 f"step {step + 1}/{len(schedule)} reward_mean={stats.reward_mean:.3f} "
                 f"std={stats.reward_std:.3f} skipped={stats.skipped_reason} "
@@ -232,7 +247,7 @@ def train(args: argparse.Namespace) -> None:
                     model, optimizer, args.output_dir / "checkpoint-latest", step + 1, config
                 )
 
-    save_checkpoint(model, optimizer, args.output_dir / "checkpoint-final", len(schedule), config)
+    save_checkpoint(model, optimizer, args.output_dir / "checkpoint-final", steps_done, config)
     print(f"Saved final adapter to {args.output_dir / 'checkpoint-final' / 'adapter'}")
 
 
