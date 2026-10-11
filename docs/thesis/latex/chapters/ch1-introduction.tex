@@ -1,0 +1,201 @@
+\chapter{Introduction}\label{sec:1}
+
+\begin{quote}
+\textbf{DRAFT --- not submission-ready.} - Results are as of 2026-10-11.
+The fixes batch (R0 seed 9, R3, R4, R0-dyn, grounded EM) is pending, and
+claims that depend on it are marked \texttt{{[}TODO{]}}. - Citation
+venues were checked on 2026-10-11; see the reference table in
+Chapter~\ref{sec:2}. - Claims about how \emph{other} papers report their
+experiments (number of GPUs, number of runs) come from the project notes
+and must be checked against each paper before submission. They are
+marked ‡.
+\end{quote}
+
+\section{Background}\label{sec:1.1}
+
+Large language models (LLMs) can answer a wide range of questions, but
+their knowledge is fixed when training ends, and they sometimes state
+false information with confidence. A common remedy is
+\textbf{retrieval-augmented generation} (RAG): before answering, the
+system retrieves relevant documents and conditions its answer on them.
+Many questions cannot be answered with a single retrieval. A
+\emph{multi-hop} question such as ``Which company formed the boy group
+that debuted with the album \emph{2014 S/S}?'' requires finding one fact
+(the group), then using it to find another (the company).
+
+This has motivated \textbf{search agents}: LLMs that decide for
+themselves when to search, what to search for, and when to stop and
+answer (Yao et al., 2023). Prompting alone does not reliably produce
+good search behaviour, so recent work trains search agents with
+\textbf{reinforcement learning} (RL). In particular, \textbf{Search-R1}
+(Jin et al., 2025) trains a model with an outcome reward, meaning the
+model is rewarded only when its final answer is correct. It uses
+\textbf{GRPO} (Shao et al., 2024), an RL algorithm that compares several
+attempts at the same question instead of training a separate value
+model. GRPO with rule-checked rewards has also been central to recent
+reasoning models (DeepSeek-AI, 2025).
+
+\section{Problem statement}\label{sec:1.2}
+
+Rewarding only the final answer creates a problem. A correct answer does
+not show that the agent found, used, or could point to the evidence
+behind it. In RL terms, the answer reward is a \textbf{proxy} for what
+is actually wanted: a correct answer \emph{supported by evidence}.
+Optimizing a proxy invites \textbf{reward hacking}, where the policy
+finds behaviour that scores well on the proxy but not on the real goal
+(Skalse et al., 2022). This thesis addresses four related gaps:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{G1, correct is not grounded.} An agent trained with
+  answer-only reward can learn to answer without showing evidence, or to
+  search in wasteful ways, as long as the final answer is right. Recent
+  work reports such shortcut behaviour in outcome-trained search agents
+  (Zhang et al., 2026).
+\item
+  \textbf{G2, evidence rewards are expensive.} Existing rewards for
+  citations and evidence typically use an LLM as a judge (Zhang et al.,
+  2026; Xu et al., 2026). That adds compute cost and latency, and the
+  judge can be biased or wrong.
+\item
+  \textbf{G3, a compute barrier.} RL for search agents is usually
+  reported at multi-GPU scale‡. It is unclear whether the same effects
+  can be studied cheaply.
+\item
+  \textbf{G4, weak evidence about what matters.} RL results vary
+  considerably between random seeds (Henderson et al., 2018). Papers
+  that report single runs‡ cannot separate the effect of a method from
+  seed noise, nor separate the effect of the reward from the effect of
+  the optimizer (Agarwal et al., 2021).
+\end{itemize}
+
+HotpotQA (Yang et al., 2018) offers a way to address G1 and G2 together.
+Its questions are annotated with the exact sentences that support the
+answer. If an agent cites sentences, the citations can be checked by a
+simple rule against these gold labels, with no judge.
+
+\section{Research questions}\label{sec:1.3}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{RQ1.} Does GRPO training improve a 7B search agent on HotpotQA
+  over the un-tuned model?
+\item
+  \textbf{RQ2.} Does a verifiable evidence-grounded reward (VEGR)
+  prevent the shortcut behaviour of answer-only reward, without losing
+  accuracy?
+\item
+  \textbf{RQ3.} How do reward variants (gated penalties, a larger
+  coverage weight) and optimizer fixes (Dr.~GRPO advantages, dynamic
+  sampling) affect grounding and search behaviour?
+\end{itemize}
+
+\section{Objectives}\label{sec:1.4}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Build a search environment and agent in which every citation can be
+  verified exactly against HotpotQA's supporting facts.
+\item
+  Design a judge-free reward, VEGR, that rewards correct answers,
+  correct citations and useful searches, and penalizes invalid actions.
+\item
+  Train the agent with GRPO and LoRA on a single GPU, using both
+  answer-only reward and VEGR, with three random seeds each.
+\item
+  Compare the trained agents on a frozen holdout set in terms of both
+  accuracy and grounding, using paired bootstrap confidence intervals.
+\item
+  Test whether reward variants and optimizer fixes change grounding and
+  stability.
+\end{enumerate}
+
+\section{Contributions}\label{sec:1.5}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{VEGR}, a judge-free, sentence-level reward for training search
+  agents. Every term is checked by rule against gold supporting facts.
+  VEGR also enforces the action protocol: invented citations, malformed
+  actions, and running out of budget all receive a −1 penalty. The
+  individual reward terms are not new; the contribution is the
+  combination and the controlled evaluation of it.
+\item
+  \textbf{Evidence that answer-only GRPO produces seed-dependent
+  shortcuts.} On holdout evaluation, one outcome-only run stopped citing
+  entirely (citation precision 0.00), and another repeated searches in
+  229 of its 278 completed episodes. The VEGR runs reached similar
+  accuracy and kept citation precision at about 0.73--0.75 across three
+  seeds. The training logs point to a likely cause: outcome-only runs
+  skipped 107 and 128 of 256 training steps because all rollouts in a
+  group received the same reward.
+  \texttt{{[}TODO: update with R0 seed 9{]}}
+\item
+  \textbf{A controlled multi-seed comparison} with paired bootstrap
+  confidence intervals, which separates reward design from optimizer
+  fixes. It shows that a single-seed improvement of +6 EM points (gated
+  penalties, R2) did not replicate across seeds.
+  \texttt{{[}TODO: add R3/\allowbreak{}R4/\allowbreak{}R0-\allowbreak{}dyn findings{]}}
+\item
+  \textbf{An open, reproducible single-GPU pipeline.} One training run
+  plus evaluation costs about \$2.25 on one 48 GB GPU, and splits,
+  configs, logs and per-episode results are all released in the
+  repository.
+\end{enumerate}
+
+\section{Scope and limitations}\label{sec:1.6}
+
+This thesis is deliberately narrow:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Data and retrieval.} It uses HotpotQA in the distractor
+  setting. The agent searches only the 10 paragraphs that come with each
+  question, using BM25, so this is not open-web or open-corpus search.
+\item
+  \textbf{Model.} The model is Qwen2.5-7B-Instruct adapted with LoRA.
+\item
+  \textbf{Scale.} Each training run uses 256 questions for one epoch,
+  and evaluation uses a frozen 300-question holdout. The whole project
+  used a compute budget of about \$45.
+\item
+  \textbf{What is not claimed.} The thesis does not propose a new RL
+  algorithm, does not claim state-of-the-art accuracy, and does not
+  claim that the findings transfer to open-web search or larger models.
+\item
+  \textbf{Known loophole.} The environment accepts an answer with no
+  citations. This was kept on purpose so that all runs are comparable,
+  and its exploitation is reported as a finding.
+\end{itemize}
+
+Chapter~\ref{sec:5} discusses the further limitations.
+
+\section{Thesis structure}\label{sec:1.7}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Chapter~\ref{sec:2}} reviews the background: LLMs, retrieval,
+  multi-hop QA and citation evaluation, LLM agents, RL for LLMs (PPO,
+  GRPO and its fixes, LoRA), RL-trained search agents, evidence rewards,
+  and reward hacking and RL evaluation. It ends with the research gaps.
+\item
+  \textbf{Chapter~\ref{sec:3}} describes the methodology: data splits,
+  the search environment, the VEGR reward and its variants, the policy
+  model, the GRPO training algorithm, the evaluation protocol, and the
+  experiment matrix.
+\item
+  \textbf{Chapter~\ref{sec:4}} reports the results by research question,
+  diagnoses the training dynamics, presents example traces, and
+  discusses threats to validity.
+\item
+  \textbf{Chapter~\ref{sec:5}} concludes, answers the research
+  questions, and outlines future work.
+\end{itemize}

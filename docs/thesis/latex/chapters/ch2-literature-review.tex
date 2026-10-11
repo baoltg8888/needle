@@ -1,0 +1,410 @@
+\chapter{Literature Review}\label{sec:2}
+
+\begin{quote}
+\textbf{DRAFT --- not submission-ready.} - \textbf{Venue status (checked
+2026-10-11):} every venue in the reference list has been checked against
+Semantic Scholar's publication record (batch lookup by arXiv ID),
+Crossref, the official proceedings, or the paper itself. ``preprint''
+means no peer-reviewed venue was found, so the paper is cited as arXiv.
+Two items remain to confirm on a primary page: CaRR at ACL 2026
+(Semantic Scholar only) and Search-R1 at COLM 2025 (the paper's own
+statement; Semantic Scholar lists arXiv). - \textbf{Paper descriptions:}
+these are drawn from abstracts and the project's research notes
+(\texttt{docs/\allowbreak{}research/\allowbreak{}}). Before submission,
+confirm each characterization against the full paper.
+\end{quote}
+
+This chapter reviews the background needed for the thesis:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Sections 2.1--2.4} cover the building blocks: language models,
+  retrieval, multi-hop QA with evidence, and LLM agents.
+\item
+  \textbf{Section~\ref{sec:2.5}} covers reinforcement learning for LLMs,
+  from PPO to GRPO and its recent fixes.
+\item
+  \textbf{Sections 2.6--2.7} review RL-trained search agents and
+  evidence-based rewards, the area this thesis contributes to.
+\item
+  \textbf{Section~\ref{sec:2.8}} covers reward hacking and how RL
+  results should be evaluated.
+\item
+  \textbf{Section~\ref{sec:2.9}} draws out the gaps the thesis
+  addresses.
+\end{itemize}
+
+\section{Large language models and instruction tuning}\label{sec:2.1}
+
+Large language models (LLMs) are first pretrained on next-token
+prediction over large text corpora, then adapted to follow instructions
+through supervised fine-tuning and preference-based training. Ouyang et
+al.~(2022) showed that fine-tuning with human feedback makes models
+follow user intent better, even when they are much smaller than the
+original model.
+
+This thesis uses \textbf{Qwen2.5-7B-Instruct} (Qwen Team, 2024,
+technical report), an instruction-tuned open-weight model. A 7B model is
+small enough to fine-tune on a single 48 GB GPU, as long as the training
+is parameter-efficient (Section 2.5.4). The instruction tuning also
+matters for the experiments: the untrained model can already attempt the
+action format, which gives reinforcement learning a starting point.
+
+\section{Retrieval-augmented generation and BM25}\label{sec:2.2}
+
+An LLM's knowledge is fixed at training time and can be wrong.
+\textbf{Retrieval-augmented generation (RAG)} addresses this by
+retrieving relevant documents and conditioning the answer on them. In
+basic RAG, retrieval happens once, before generation. Questions that
+need several pieces of information may need several retrievals, each one
+depending on what the previous one found. That motivates the agentic
+approach in Section~\ref{sec:2.4}.
+
+This thesis uses \textbf{BM25} (Robertson \& Zaragoza, 2009) as the
+retriever. BM25 is a sparse lexical ranking function: it scores a
+document by how often the query terms appear in it, weighted by how rare
+each term is, and normalized by document length. It needs no training
+and is deterministic, so a given query always returns the same
+documents. This determinism is what makes the evidence reward in
+Chapter~\ref{sec:3} exactly verifiable: it is always known which query
+surfaced which document.
+
+\section{Multi-hop QA, HotpotQA, and citation evaluation}\label{sec:2.3}
+
+\textbf{HotpotQA} (Yang et al., 2018) is a multi-hop question answering
+dataset built from Wikipedia: answering a question requires combining
+information from two paragraphs. It has two features that this thesis
+relies on:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Distractor setting.} Each question comes with 10 paragraphs:
+  the 2 gold paragraphs plus 8 distractors retrieved to look relevant.
+  The system has to find the gold paragraphs among the distractors.
+\item
+  \textbf{Supporting facts.} Annotators marked the exact sentences, as
+  (paragraph title, sentence index) pairs, that are needed to answer
+  each question. The dataset evaluates answers with exact match (EM) and
+  token F1, and evaluates supporting-fact prediction separately.
+\end{itemize}
+
+These sentence-level labels make it possible to check whether a model's
+evidence is correct with a simple rule, without a human or a model
+acting as judge.
+
+\textbf{Citation evaluation.} Gao et al.~(2023 ✓, EMNLP) introduced
+\textbf{ALCE}, a benchmark for LLMs that generate text with citations.
+ALCE treats correctness and citation quality as separate dimensions, and
+separates \emph{citation recall} (is every statement supported by the
+cited passages?) from \emph{citation precision} (is every citation
+relevant?). The authors report that even the best models of the time
+often lacked complete citation support. This thesis uses the same split
+between \emph{evidence coverage} (a form of recall) and \emph{citation
+precision} (Chapter~\ref{sec:3}). The main difference is the setting:
+here citations are checked against HotpotQA's gold sentences rather than
+judged by a natural-language-inference model.
+
+\section{LLM agents and tool use}\label{sec:2.4}
+
+An \textbf{LLM agent} interleaves reasoning with actions in an
+environment. \textbf{ReAct} (Yao et al., 2023) prompts a model to
+alternate between reasoning and tool calls (such as a search) and to
+condition each step on what the earlier steps observed. The agent in
+this thesis follows a simplified ReAct-style loop with a strict action
+grammar: on each turn it either searches or gives a final answer with
+citations (Chapter~\ref{sec:3}).
+
+Prompting alone does not guarantee that a model uses tools well. Jin et
+al.~(2025 ✓, COLM) argue that prompted LLMs may not know how to interact
+with a search engine optimally. This motivates training the agent's tool
+use with reinforcement learning.
+
+\section{Reinforcement learning for LLMs}\label{sec:2.5}
+
+\subsection{Policy gradients and PPO}\label{sec:2.5.1}
+
+In RL fine-tuning, the LLM is the \textbf{policy}: given a context, it
+produces actions (tokens), and an episode is scored by a reward.
+Policy-gradient methods raise the probability of actions that led to
+above-average reward. \textbf{Proximal Policy Optimization} (PPO;
+Schulman et al., 2017, preprint) stabilizes this by clipping the ratio
+between the new and old policy probabilities, so that a single update
+cannot move the policy too far. Standard PPO for LLMs also trains a
+value network (critic) to estimate the expected reward, which roughly
+doubles the memory needed.
+
+\subsection{GRPO}\label{sec:2.5.2}
+
+\textbf{Group Relative Policy Optimization} (GRPO) was introduced in
+DeepSeekMath (Shao et al., 2024, preprint). It removes the critic.
+Instead, it samples a group of outputs for the same prompt and uses each
+output's reward relative to the group, normalized by the group's mean
+and standard deviation, as its advantage.
+
+\textbf{DeepSeek-R1} (DeepSeek-AI, 2025 ✓, Nature) showed that GRPO with
+rule-based, verifiable rewards can train strong reasoning. Its rewards
+checked answer accuracy and output format, with no learned reward model.
+VEGR follows the same principle: every reward term can be checked by
+rule.
+
+Group normalization has a side effect that matters in this thesis. When
+all outputs in a group receive the same reward, every advantage is zero,
+and the group provides no learning signal.
+
+\subsection{Fixes to GRPO: Dr.~GRPO and DAPO}\label{sec:2.5.3}
+
+Two lines of recent work modify GRPO, and this thesis tests both.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Dr.~GRPO} (Liu et al., 2025, preprint) identifies an
+  optimization bias in GRPO and removes its length and
+  standard-deviation normalization terms. This thesis uses only the
+  second change, computing advantages without dividing by the standard
+  deviation (run R4).
+\item
+  \textbf{DAPO} (Yu et al., 2025 ✓, NeurIPS) proposes several changes
+  for large-scale RL. One of them is \textbf{dynamic sampling}: groups
+  whose outputs all get the same reward are dropped, and more groups are
+  sampled until the batch has a learning signal. The thesis adapts this
+  idea in run R0-dyn.
+\end{itemize}
+
+\subsection{Parameter-efficient fine-tuning: LoRA}\label{sec:2.5.4}
+
+Fine-tuning all 7 billion parameters with RL does not fit on one GPU.
+\textbf{LoRA} (Hu et al., 2022) freezes the pretrained weights and
+trains small low-rank matrices added to selected layers. This cuts
+memory to a fraction of full fine-tuning, which is what lets this
+project train on a single 48 GB GPU.
+
+\section{Reinforcement learning for search agents}\label{sec:2.6}
+
+\textbf{Search-R1} (Jin et al., 2025 ✓, COLM) is the main reference
+point for this thesis. It trains an LLM to issue search queries during
+step-by-step reasoning, using RL with a \textbf{simple outcome-based
+reward}: whether the final answer is correct. The training covers
+multi-turn trajectories, and retrieved tokens are masked from the loss.
+Search-R1 reports large gains over RAG baselines on seven QA datasets
+with Qwen2.5 models. The outcome-only baseline in this thesis (R0)
+follows the same reward design.
+
+\textbf{AutoRefine} (Shi et al., 2025, NeurIPS) adds a step that refines
+retrieved knowledge between searches. It trains with GRPO using both
+answer-correctness and \textbf{retrieval-specific rewards}, and reports
+its largest gains on multi-hop questions. This supports the idea, used
+in VEGR, that rewarding intermediate search quality helps beyond the
+final answer alone.
+
+These systems share two properties that this thesis departs from:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  They are usually trained and reported at multi-GPU scale.
+\item
+  Their main reward is answer correctness. A correct answer does not
+  show that the model used, or could point to, the evidence behind it.
+\end{enumerate}
+
+\section{Grounding and evidence-based rewards}\label{sec:2.7}
+
+Several works move beyond single holistic rewards.
+
+\textbf{Fine-Grained RLHF} (Wu et al., 2023) trains with several reward
+models, each targeting a different kind of error (for example factual
+incorrectness, irrelevance, or incompleteness), instead of one holistic
+preference score. The authors show that changing how the rewards are
+combined changes the model's behaviour. This supports VEGR's per-aspect
+design and the re-weighting experiment R3.
+
+Two 2026 papers address evidence directly in search-agent RL:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{CaRR / C-GRPO} (Zhang et al., 2026, ACL) breaks multi-hop
+  questions into single-hop rubrics. A judge LLM checks whether each
+  rubric is supported by the cited content, and the rubric reward counts
+  only when the answer is correct. The authors report that under
+  outcome-only GRPO, agents learn \textbf{shortcut answers} and make
+  fewer tool calls. This matches the shortcut behaviour reported in
+  Chapter~\ref{sec:4}.
+\item
+  \textbf{STAMP} (Xu et al., 2026, preprint) credits each search step
+  that first surfaced a cited supporting document, and uses an LLM
+  verifier to check citations. It notes that citation-aware and
+  evidence-coverage rewards are now common in this line of work.
+\end{itemize}
+
+\textbf{Position of this thesis.} Both CaRR and STAMP rely on an
+\textbf{LLM judge or verifier}, which adds cost and possible bias. They
+also work with live web search at larger model scales. VEGR instead uses
+HotpotQA's gold supporting facts and a deterministic retriever, so every
+evidence term is computed exactly by rule. The individual terms of VEGR
+are not new (Section~\ref{sec:3.4}). What this thesis adds is a
+judge-free combination for a small, single-GPU setting, together with a
+controlled multi-seed test of what that combination changes.
+
+\section{Reward hacking and evaluating RL}\label{sec:2.8}
+
+\textbf{Reward hacking.} Skalse et al.~(2022 ✓, NeurIPS; the proceedings
+title is ``Defining and Characterizing Reward Gaming'', while the arXiv
+title is ``\ldots Reward Hacking'') formally define reward hacking:
+optimizing an imperfect proxy reward lowers performance on the true
+objective. They argue that proxies that cannot be hacked are rare. Gao,
+Schulman and Hilton (2023) measure the same effect with learned reward
+models: optimizing a proxy too hard eventually hurts the true (``gold'')
+score. In this thesis, the proxy is answer correctness and the true
+objective is a correct \emph{and} grounded answer. Chapter~\ref{sec:4}
+reports cases where the outcome-only policy satisfied the proxy without
+citing evidence.
+
+\textbf{Evaluating RL with few runs.} RL results vary considerably
+between random seeds.
+
+\begin{itemize}
+\tightlist
+\item
+  Henderson et al.~(2018) showed that differences between seeds alone
+  can look like significant differences between methods.
+\item
+  Agarwal et al.~(2021) argue that when there are only a few runs,
+  results should be reported as interval estimates (for example
+  bootstrap confidence intervals), never as single runs.
+\end{itemize}
+
+This thesis therefore trains every main method with 3 seeds and compares
+models with paired bootstrap confidence intervals
+(Section~\ref{sec:3.7}).
+
+\section{Research gaps and positioning}\label{sec:2.9}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Gap
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Evidence from literature
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+How this thesis addresses it
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{G1} Correct ≠ grounded & Outcome-only rewards (Search-R1) do not
+check evidence; CaRR reports shortcut answers; reward hacking theory
+(Skalse) & Measure grounding directly with sentence-level gold evidence;
+compare R0 with VEGR \\
+\textbf{G2} Evidence rewards need an LLM judge & CaRR and STAMP use LLM
+judges or verifiers; ALCE uses an NLI model & VEGR checks evidence by
+rule against HotpotQA supporting facts \\
+\textbf{G3} Search-agent RL is reported at multi-GPU scale & Search-R1,
+AutoRefine, CaRR, STAMP & Single 48 GB GPU, LoRA, about \$2.25 per
+run \\
+\textbf{G4} Single-run results mistake seed noise for method effects &
+Henderson 2018; Agarwal 2021 & 3 seeds per method; paired bootstrap
+CIs \\
+\end{longtable}
+}
+
+In short, this thesis does not propose a new RL algorithm or claim
+state-of-the-art accuracy. It asks a narrower question in a fully
+controlled setting: \textbf{when the evidence can be checked exactly,
+does rewarding it change how a search agent behaves, compared with
+rewarding the answer alone?}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{References}\label{references}
+
+Draft list. The ``Checked via'' column records how each venue was
+verified on 2026-10-11. Final formatting follows the university's
+citation style {[}TODO: which style{]}.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Reference
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Venue
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Checked via
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Agarwal, R., Schwarzer, M., Castro, P. S., Courville, A., Bellemare, M.
+G. (2021). Deep Reinforcement Learning at the Edge of the Statistical
+Precipice. arXiv:2108.13264 & NeurIPS 2021 & Semantic Scholar \\
+DeepSeek-AI (2025). DeepSeek-R1 & \emph{Nature} 2025 & earlier session
+(writer brief) \\
+Gao, L., Schulman, J., Hilton, J. (2023). Scaling Laws for Reward Model
+Overoptimization. arXiv:2210.10760 & ICML 2023 & Semantic Scholar \\
+Gao, T., Yen, H., Yu, J., Chen, D. (2023). Enabling Large Language
+Models to Generate Text with Citations. pp.~6465--6488. arXiv:2305.14627
+& EMNLP 2023 & ACL Anthology \\
+Henderson, P., et al.~(2018). Deep Reinforcement Learning that Matters.
+doi:10.1609/aaai.v32i1.11694 & AAAI 2018 & Semantic Scholar (AAAI
+DOI) \\
+Hu, E. J., et al.~(2022). LoRA: Low-Rank Adaptation of Large Language
+Models. arXiv:2106.09685 & ICLR 2022 & Semantic Scholar \\
+Jin, B., et al.~(2025). Search-R1: Training LLMs to Reason and Leverage
+Search Engines with Reinforcement Learning. arXiv:2503.09516 & COLM 2025
+& the paper's own statement {[}TODO: confirm on the COLM site{]} \\
+Liu, Z., et al.~(2025). Understanding R1-Zero-Like Training: A Critical
+Perspective. arXiv:2503.20783 & preprint & Semantic Scholar lists arXiv
+only \\
+Ouyang, L., et al.~(2022). Training language models to follow
+instructions with human feedback. arXiv:2203.02155 & NeurIPS 2022 &
+Semantic Scholar (proceedings DOI) \\
+Yang, A., et al.~(Qwen Team) (2024). Qwen2.5 Technical Report.
+arXiv:2412.15115 & technical report & Semantic Scholar \\
+Robertson, S., Zaragoza, H. (2009). The Probabilistic Relevance
+Framework: BM25 and Beyond. doi:10.1561/1500000019 & \emph{Foundations
+and Trends in Information Retrieval} & Crossref \\
+Schulman, J., et al.~(2017). Proximal Policy Optimization Algorithms.
+arXiv:1707.06347 & preprint & --- \\
+Shao, Z., et al.~(2024). DeepSeekMath: Pushing the Limits of
+Mathematical Reasoning in Open Language Models. arXiv:2402.03300 &
+preprint & Semantic Scholar lists arXiv only \\
+Shi, Y., et al.~(2025). Search and Refine During Think: Facilitating
+Knowledge Refinement for Improved Retrieval-Augmented Reasoning
+(AutoRefine). arXiv:2505.11277 & NeurIPS 2025 & Semantic Scholar
+(proceedings DOI 10.52202/085713-5211) \\
+Skalse, J., Howe, N., Krasheninnikov, D., Krueger, D. (2022). Defining
+and Characterizing Reward Gaming. arXiv:2209.13085 & NeurIPS 2022 &
+NeurIPS proceedings \\
+Xu, K., et al.~(2026). STAMP: Provenance-Guided Credit Assignment for
+Deep Search Agents. arXiv:2607.11172 & preprint & Semantic Scholar \\
+Wu, Z., et al.~(2023). Fine-Grained Human Feedback Gives Better Rewards
+for Language Model Training. arXiv:2306.01693 & NeurIPS 2023 & Semantic
+Scholar \\
+Yang, Z., et al.~(2018). HotpotQA: A Dataset for Diverse, Explainable
+Multi-hop Question Answering. doi:10.18653/v1/D18-1259 & EMNLP 2018 &
+Semantic Scholar (ACL Anthology DOI) \\
+Yao, S., et al.~(2023). ReAct: Synergizing Reasoning and Acting in
+Language Models. arXiv:2210.03629 & ICLR 2023 & Semantic Scholar \\
+Yu, Q., et al.~(2025). DAPO: An Open-Source LLM Reinforcement Learning
+System at Scale. arXiv:2503.14476 & NeurIPS 2025 & NeurIPS
+proceedings \\
+Zhang, J., Lv, X., Feng, L., Hou, L., Li, J. (2026). Chaining the
+Evidence: Robust Reinforcement Learning for Deep Search Agents with
+Citation-Aware Rubric Rewards (CaRR). arXiv:2601.06021 & ACL 2026 &
+Semantic Scholar only {[}TODO: confirm in the ACL Anthology{]} \\
+\end{longtable}
+}
