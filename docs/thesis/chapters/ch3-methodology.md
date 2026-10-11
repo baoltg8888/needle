@@ -223,7 +223,11 @@ The comparisons map onto the research questions:
   - R4 against R1, and R0-dyn against R0, test optimizer fixes.
   - R0-dyn is the key control. If dynamic sampling alone removes R0's shortcut, the problem was the optimizer and not the reward. If it does not, the evidence reward is necessary.
 
-R0-dyn uses only seed 8, the seed on which R0 showed the citation shortcut. [TODO: author to confirm the reason for a single seed; it is not recorded in the plan or logs.]
+R0-dyn was run on a single seed (seed 8) as a **diagnostic experiment**, not as one of the main methods.
+
+- **Why one seed (cost).** Dynamic sampling discards zero-variance groups, and R0 seed 8 skipped 128 of its 256 steps. Reaching 256 real updates is therefore expected to take up to about 512 questions, roughly twice the rollouts and cost of a standard run. The budget extension originally planned this test on two seeds. It was cut to one so that the 3-seed runs of the main methods (R0–R4) fit the budget. [TODO: replace "expected" with the actual number of questions drawn and the run time.]
+- **Why seed 8.** It is the seed on which outcome-only training collapsed to uncited answers. The question is narrow: does an optimizer-level fix alone prevent this shortcut where it actually happened? A seed on which R0 did not collapse could not answer that.
+- **How it is read.** R0-dyn is interpreted as a case study about mechanism, not as a statistically supported comparison between methods.
 
 **Planned vs. post hoc.** B0, R0, R1, and R2 were specified before the multi-seed batch ran (`logs/2026-10-10-r0-r1-r2-batch.md`). Only the single R1 seed-7 run existed at that point. R3, R4, and R0-dyn were added on 2026-10-11, after the R0/R1/R2 results had been analysed (`docs/research/2026-10-11-results-diagnosis-and-improvements.md`). They respond to specific observations: low evidence coverage, and R0's skipped steps and shortcuts. They are therefore **exploratory follow-ups**, and Chapter 4 reports them as such rather than as confirmatory tests.
 

@@ -282,3 +282,4 @@ R1 uses its second search to follow the bridge entity ("WINNER") into the second
 - **Environment loophole.** The environment accepts answers without citations. This was kept deliberately for comparability, but it makes the R0 seed-8 shortcut possible. Closing it would likely change R0's behaviour.
 - **Untuned weights.** The reward weights are untuned defaults.
 - **Exploratory runs.** R3, R4 and R0-dyn were designed after seeing the R0/R1/R2 results and are reported as exploratory.
+- **R0-dyn has one seed.** Budget allowed only a single run, on the seed where R0 collapsed (Section 3.8). Its result is evidence about mechanism on that seed, not a method comparison.

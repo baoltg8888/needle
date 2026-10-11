@@ -19,5 +19,12 @@ Estimate: seed 9 done ~18:20 WIB 2026-10-11; queue ≈ 18 h → done ~12:30 WIB 
 
 The no-citation loophole is **not** changed in the environment, so new runs stay comparable with R0–R2. Instead, evaluation adds a "grounded EM" metric (EM = 1, at least one citation, and every citation a gold fact).
 
+### Why R0-dyn has one seed (recorded 2026-10-11)
+The plan's Medium tier listed "F5 on R0 × 2 seeds". When the queue was built, this was cut to **one seed**:
+- **Cost.** Dynamic sampling doesn't count zero-variance groups. R0 s8 skipped 128/256 steps, so reaching 256 updates is expected to need up to ~512 questions, about 2× a normal run (~$4.50).
+- **Priority.** The +$15 had to cover 3 seeds for every main method (R0–R4) first.
+- **Seed choice.** Seed 8 was chosen on purpose, because R0 collapsed there (citation precision 0.00, 128/256 skipped). The run tests whether an optimizer fix alone stops the shortcut where it actually happened.
+- **Framing in the thesis.** It is a single-seed diagnostic case study, not a method comparison, and it is listed under limitations.
+
 ## Results
 _To be filled when the queue finishes._
