@@ -1,7 +1,6 @@
 # Chapter 4 — Results and Discussion
 
-> **DRAFT — not submission-ready.** Status as of 2026-10-11. Every number comes from `docs/thesis/writer-brief.md` §4 or from `results/2026-10-10-batch/*/episodes.jsonl`. Results from the fixes batch (R0 seed 9, R3, R4, R0-dyn), grounded EM, and the seed-9 confidence intervals are **pending** (expected ~12:30 WIB 2026-10-12, in `logs/2026-10-11-fixes-batch.md`). They are marked `[TODO]`. Citations marked † still need venue verification (see Chapter 2).
-
+> **DRAFT — not submission-ready.** Status as of 2026-10-11. Every number comes from `docs/thesis/writer-brief.md` §4 or from `results/2026-10-10-batch/*/episodes.jsonl`. Results from the fixes batch (R0 seed 9, R3, R4, R0-dyn), grounded EM, and the seed-9 confidence intervals are **pending** (expected ~12:30 WIB 2026-10-12, in `logs/2026-10-11-fixes-batch.md`). They are marked `[TODO]`.
 This chapter reports the results in the order of the research questions:
 
 - **4.1** gives the experimental setup.
@@ -258,7 +257,7 @@ R1 uses its second search to follow the bridge entity ("WINNER") into the second
 
 **Comparison with the literature.**
 
-- **Shortcut behaviour.** The R0 shortcuts are consistent with CaRR (Zhang et al., 2026, preprint), which reports that outcome-only GRPO agents learn shortcut answers and use fewer tool calls. R0 seed 8 shows the same pattern in a much smaller setting (7B, LoRA, 256 questions, one GPU). Because HotpotQA's supporting facts are exact, the shortcut can be detected by rule, without a judge.
+- **Shortcut behaviour.** The R0 shortcuts are consistent with CaRR (Zhang et al., 2026), which reports that outcome-only GRPO agents learn shortcut answers and use fewer tool calls. R0 seed 8 shows the same pattern in a much smaller setting (7B, LoRA, 256 questions, one GPU). Because HotpotQA's supporting facts are exact, the shortcut can be detected by rule, without a judge.
 - **Seed dependence.** R0 seed 7 failed in the *opposite* direction from seed 8: it searched more, not less. So "fewer searches" is not the only way outcome-only training goes wrong.
 - **Accuracy.** The results agree with Search-R1 (Jin et al., 2025) that outcome-only RL improves accuracy. They add that the accuracy number alone hides whether the answers are grounded.
 

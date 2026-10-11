@@ -1,6 +1,6 @@
 # Chapter 3 — Methodology
 
-> **DRAFT — not submission-ready.** Citations marked † have venues recalled from memory and have not been checked against the source (writer brief, §5). Verify each one, then remove the †. Every number and code detail in this chapter is traced to the writer brief, `configs/`, `logs/`, or source code (see the provenance table at the end).
+> **DRAFT — not submission-ready.** Citation venues were checked on 2026-10-11 (reference table in Chapter 2). Every number and code detail in this chapter is traced to the writer brief, `configs/`, `logs/`, or source code (see the provenance table at the end).
 
 This chapter describes how the search agent is built, trained, and evaluated. Section 3.1 gives an overview of the research design. Sections 3.2–3.6 describe the data, the search environment, the proposed reward (VEGR), the policy model, and the training algorithm. Section 3.7 defines the evaluation protocol, Section 3.8 lists the experiments, and Section 3.9 reports the implementation and compute details.
 
@@ -35,7 +35,7 @@ Three research questions guide the design (Chapter 1):
 
 ## 3.2 Dataset and splits
 
-The study uses **HotpotQA** (Yang et al., 2018†), version 1.1, in the *distractor* setting. Each question comes with 10 Wikipedia paragraphs: 2 gold paragraphs that contain the answer evidence, and 8 distractors. Each question is also annotated with **supporting facts**, the (title, sentence index) pairs needed to answer it. These annotations are what make a judge-free evidence reward possible: whether a citation is correct can be checked by rule.
+The study uses **HotpotQA** (Yang et al., 2018), version 1.1, in the *distractor* setting. Each question comes with 10 Wikipedia paragraphs: 2 gold paragraphs that contain the answer evidence, and 8 distractors. Each question is also annotated with **supporting facts**, the (title, sentence index) pairs needed to answer it. These annotations are what make a judge-free evidence reward possible: whether a citation is correct can be checked by rule.
 
 Rows that fail validation are skipped and logged with a reason (for example, an empty sentence or a supporting-fact index out of range).
 
@@ -50,7 +50,7 @@ Rows that fail validation are skipped and logged with a reason (for example, an 
 
 The environment (`SearchEnvironment`, `src/needle/environment/search.py`) is a bounded, resettable search session over a single question.
 
-**Corpus and retriever.** The searchable corpus is the question's own 10 paragraphs. Retrieval uses Okapi BM25 (Robertson & Zaragoza, 2009†), via the `rank_bm25` implementation with its default parameters. Each paragraph is indexed as its title plus all its sentences, tokenized into case-folded Unicode word tokens. A search returns the **top 3** documents. Ties are broken by original document order, so retrieval is deterministic. Each returned document is shown in full, with numbered sentences.
+**Corpus and retriever.** The searchable corpus is the question's own 10 paragraphs. Retrieval uses Okapi BM25 (Robertson & Zaragoza, 2009), via the `rank_bm25` implementation with its default parameters. Each paragraph is indexed as its title plus all its sentences, tokenized into case-folded Unicode word tokens. A search returns the **top 3** documents. Ties are broken by original document order, so retrieval is deterministic. Each returned document is shown in full, with numbered sentences.
 
 **Budget.** An episode allows at most **3 searches**.
 
@@ -94,7 +94,7 @@ An **invalid** episode receives **R = −1**, regardless of the other terms. Thi
 The terms fall into three groups, each aimed at a different failure:
 
 - **Answer terms (EM, F1)** reward correctness. F1 gives partial credit, so the reward is less sparse than EM alone.
-- **Evidence terms (Cov, Prec)** reward citing the right sentences. Precision alone could be satisfied by citing a single safe sentence, and coverage alone by citing everything, so both are included (cf. ALCE; Gao et al., 2023†).
+- **Evidence terms (Cov, Prec)** reward citing the right sentences. Precision alone could be satisfied by citing a single safe sentence, and coverage alone by citing everything, so both are included (cf. ALCE; Gao et al., 2023).
 - **Search terms (RetR, Cost, Dup)** reward finding the gold documents and penalize wasted or repeated searches. The penalties have a small weight (0.1) so that they shape search behaviour without discouraging search altogether.
 
 The individual terms are not new. The contribution is combining them into a judge-free reward for multi-turn search agents, together with a controlled evaluation of what the combination changes (Section 3.8). All weights are untuned defaults. This is a limitation, discussed in Chapter 5.
@@ -118,13 +118,13 @@ The individual terms are not new. The contribution is combining them into a judg
 
 **Reward variants.** Three variants change one aspect of VEGR at a time:
 
-- **R0, outcome-only (baseline reward).** R = EM. All other weights are 0, but invalid episodes still receive −1. This mirrors outcome-reward search agents such as Search-R1 (Jin et al., 2025†).
+- **R0, outcome-only (baseline reward).** R = EM. All other weights are 0, but invalid episodes still receive −1. This mirrors outcome-reward search agents such as Search-R1 (Jin et al., 2025).
 - **R2, gated penalties.** This is VEGR, except that the search-cost and duplicate penalties apply only when EM = 1. The idea is to avoid penalizing search on questions the agent has not yet solved.
 - **R3, coverage ×2.** This is VEGR with the evidence-coverage weight raised from 1 to 2. It targets the "precise but incomplete" citation pattern described in Chapter 4.
 
 ## 3.5 Policy model
 
-**Base model.** The policy is **Qwen2.5-7B-Instruct** (Qwen Team, 2024†), loaded from local weights in bf16.
+**Base model.** The policy is **Qwen2.5-7B-Instruct** (Qwen Team, 2024), loaded from local weights in bf16.
 
 **Prompt.** The prompt is deterministic and built by `build_prompt` in `src/needle/inference/runner.py`. It is wrapped in the model's chat template. The prompt:
 
@@ -133,13 +133,13 @@ The individual terms are not new. The contribution is combining them into a judg
 3. Gives the question and the remaining search budget.
 4. Lists all search results so far. For each search, it shows the query and then every returned document as `[Title]` followed by `index: sentence` lines.
 
-The prompt is rebuilt from scratch every turn, so the model always sees the full search history. The complete prompt text is given in Appendix A. `[TODO: Appendix A — paste full build_prompt output for one example]`
+The prompt is rebuilt from scratch every turn, so the model always sees the full search history. Appendix A gives the complete prompt for one real holdout question, at the point just before the agent gives its final answer.
 
-**Adapter.** Training uses LoRA (Hu et al., 2022†) with rank r = 16, α = 32, and dropout 0. The adapter is applied to all attention and MLP projections (q, k, v, o, gate, up, down). The base weights stay frozen, which makes training on a single 48 GB GPU possible.
+**Adapter.** Training uses LoRA (Hu et al., 2022) with rank r = 16, α = 32, and dropout 0. The adapter is applied to all attention and MLP projections (q, k, v, o, gate, up, down). The base weights stay frozen, which makes training on a single 48 GB GPU possible.
 
 ## 3.6 Training algorithm
 
-Training uses **Group Relative Policy Optimization** (GRPO; Shao et al., 2024†), extended to multi-turn episodes. The implementation is in `scripts/train_grpo.py` and `src/needle/training/grpo.py`.
+Training uses **Group Relative Policy Optimization** (GRPO; Shao et al., 2024), extended to multi-turn episodes. The implementation is in `scripts/train_grpo.py` and `src/needle/training/grpo.py`.
 
 **Rollouts.** For each training question, the current policy runs **G = 8** full episodes, sampling with temperature 1.0 and top-p 1.0. Each action is limited to 128 new tokens. Each episode receives one scalar reward from the reward function of the run (R0–R3).
 
@@ -151,7 +151,7 @@ $$
 
 All actions in an episode share the episode's advantage. If all 8 rewards in a group are equal, every advantage is zero and the group carries no learning signal. Such **zero-variance groups are skipped**: no update is made. The number of skipped steps is logged, and it turns out to be an important diagnostic (Chapter 4).
 
-**Objective.** The update uses the PPO-style clipped surrogate (Schulman et al., 2017†) with ε = 0.2. Each rollout's log-probability is the **mean over all tokens the agent generated in that episode**, across all its actions. Prompt and observation tokens are excluded. The ratio ρ is therefore computed once per rollout.
+**Objective.** The update uses the PPO-style clipped surrogate (Schulman et al., 2017) with ε = 0.2. Each rollout's log-probability is the **mean over all tokens the agent generated in that episode**, across all its actions. Prompt and observation tokens are excluded. The ratio ρ is therefore computed once per rollout.
 
 $$
 \mathcal{L} = -\,\mathbb{E}\left[\min\left(\rho\,A,\; \operatorname{clip}(\rho,\,1-\varepsilon,\,1+\varepsilon)\,A\right)\right],
@@ -166,8 +166,8 @@ There is **no KL penalty** to a reference model. Invalid rollouts stay in the ba
 
 **Optimizer variants.** Two variants change the optimizer instead of the reward:
 
-- **Dr. GRPO advantages** (Liu et al., 2025†), used in R4. The advantage is computed without dividing by the standard deviation, A_i = r_i − mean(r). This removes the scaling that amplifies groups whose rewards are nearly equal.
-- **DAPO-style dynamic sampling** (Yu et al., 2025†), used in R0-dyn. Zero-variance groups do not count toward the step budget. The trainer keeps drawing questions, from a pool of up to 512, until it has made 256 actual optimizer updates. This tests whether R0's shortcut comes from having too few informative updates.
+- **Dr. GRPO advantages** (Liu et al., 2025), used in R4. The advantage is computed without dividing by the standard deviation, A_i = r_i − mean(r). This removes the scaling that amplifies groups whose rewards are nearly equal.
+- **DAPO-style dynamic sampling** (Yu et al., 2025), used in R0-dyn. Zero-variance groups do not count toward the step budget. The trainer keeps drawing questions, from a pool of up to 512, until it has made 256 actual optimizer updates. This tests whether R0's shortcut comes from having too few informative updates.
 
 **Pseudocode.**
 
@@ -196,7 +196,7 @@ for step, question in enumerate(sample(train_split, 256, seed)):
 - **Grounded EM** counts an episode only if EM = 1, it has at least one citation, and every citation is a gold supporting fact. This is a strict metric: a correct answer with one non-gold citation does not count. It is the measure most directly tied to the thesis claim that answers should be correct *and* supported by evidence.
 - **Behavioural diagnostics** come from the episode and training logs. They include the share of episodes that repeat a query, the distribution of citation counts and cited sentence indices, the invalid rate during training, and the number of skipped (zero-variance) training steps.
 
-**Statistics.** Following Agarwal et al. (2021†) and Henderson et al. (2018†), single runs are not treated as conclusive.
+**Statistics.** Following Agarwal et al. (2021) and Henderson et al. (2018), single runs are not treated as conclusive.
 
 - Differences in EM between two models are tested with a **paired bootstrap** over the 300 holdout questions: 10,000 resamples and a 95% percentile confidence interval. A difference is called significant only if the CI excludes 0.
 - Each reward variant is trained with **3 seeds** (7, 8, 9). Results are reported per seed and as the mean across seeds.

@@ -2,25 +2,25 @@
 
 > **DRAFT — not submission-ready.**
 > - Results are as of 2026-10-11. The fixes batch (R0 seed 9, R3, R4, R0-dyn, grounded EM) is pending, and claims that depend on it are marked `[TODO]`.
-> - Citations marked † still need venue verification (Chapter 2).
+> - Citation venues were checked on 2026-10-11; see the reference table in Chapter 2.
 > - Claims about how *other* papers report their experiments (number of GPUs, number of runs) come from the project notes and must be checked against each paper before submission. They are marked ‡.
 
 ## 1.1 Background
 
 Large language models (LLMs) can answer a wide range of questions, but their knowledge is fixed when training ends, and they sometimes state false information with confidence. A common remedy is **retrieval-augmented generation** (RAG): before answering, the system retrieves relevant documents and conditions its answer on them. Many questions cannot be answered with a single retrieval. A *multi-hop* question such as "Which company formed the boy group that debuted with the album *2014 S/S*?" requires finding one fact (the group), then using it to find another (the company).
 
-This has motivated **search agents**: LLMs that decide for themselves when to search, what to search for, and when to stop and answer (Yao et al., 2023†). Prompting alone does not reliably produce good search behaviour, so recent work trains search agents with **reinforcement learning** (RL). In particular, **Search-R1** (Jin et al., 2025) trains a model with an outcome reward, meaning the model is rewarded only when its final answer is correct. It uses **GRPO** (Shao et al., 2024), an RL algorithm that compares several attempts at the same question instead of training a separate value model. GRPO with rule-checked rewards has also been central to recent reasoning models (DeepSeek-AI, 2025).
+This has motivated **search agents**: LLMs that decide for themselves when to search, what to search for, and when to stop and answer (Yao et al., 2023). Prompting alone does not reliably produce good search behaviour, so recent work trains search agents with **reinforcement learning** (RL). In particular, **Search-R1** (Jin et al., 2025) trains a model with an outcome reward, meaning the model is rewarded only when its final answer is correct. It uses **GRPO** (Shao et al., 2024), an RL algorithm that compares several attempts at the same question instead of training a separate value model. GRPO with rule-checked rewards has also been central to recent reasoning models (DeepSeek-AI, 2025).
 
 ## 1.2 Problem statement
 
 Rewarding only the final answer creates a problem. A correct answer does not show that the agent found, used, or could point to the evidence behind it. In RL terms, the answer reward is a **proxy** for what is actually wanted: a correct answer *supported by evidence*. Optimizing a proxy invites **reward hacking**, where the policy finds behaviour that scores well on the proxy but not on the real goal (Skalse et al., 2022). This thesis addresses four related gaps:
 
-- **G1, correct is not grounded.** An agent trained with answer-only reward can learn to answer without showing evidence, or to search in wasteful ways, as long as the final answer is right. Recent work reports such shortcut behaviour in outcome-trained search agents (Zhang et al., 2026, preprint).
-- **G2, evidence rewards are expensive.** Existing rewards for citations and evidence typically use an LLM as a judge (Zhang et al., 2026; STAMP, 2026; both preprints). That adds compute cost and latency, and the judge can be biased or wrong.
+- **G1, correct is not grounded.** An agent trained with answer-only reward can learn to answer without showing evidence, or to search in wasteful ways, as long as the final answer is right. Recent work reports such shortcut behaviour in outcome-trained search agents (Zhang et al., 2026).
+- **G2, evidence rewards are expensive.** Existing rewards for citations and evidence typically use an LLM as a judge (Zhang et al., 2026; Xu et al., 2026). That adds compute cost and latency, and the judge can be biased or wrong.
 - **G3, a compute barrier.** RL for search agents is usually reported at multi-GPU scale‡. It is unclear whether the same effects can be studied cheaply.
-- **G4, weak evidence about what matters.** RL results vary considerably between random seeds (Henderson et al., 2018†). Papers that report single runs‡ cannot separate the effect of a method from seed noise, nor separate the effect of the reward from the effect of the optimizer (Agarwal et al., 2021†).
+- **G4, weak evidence about what matters.** RL results vary considerably between random seeds (Henderson et al., 2018). Papers that report single runs‡ cannot separate the effect of a method from seed noise, nor separate the effect of the reward from the effect of the optimizer (Agarwal et al., 2021).
 
-HotpotQA (Yang et al., 2018†) offers a way to address G1 and G2 together. Its questions are annotated with the exact sentences that support the answer. If an agent cites sentences, the citations can be checked by a simple rule against these gold labels, with no judge.
+HotpotQA (Yang et al., 2018) offers a way to address G1 and G2 together. Its questions are annotated with the exact sentences that support the answer. If an agent cites sentences, the citations can be checked by a simple rule against these gold labels, with no judge.
 
 ## 1.3 Research questions
 
