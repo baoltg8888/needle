@@ -99,6 +99,23 @@ The terms fall into three groups, each aimed at a different failure:
 
 The individual terms are not new. The contribution is combining them into a judge-free reward for multi-turn search agents, together with a controlled evaluation of what the combination changes (Section 3.8). All weights are untuned defaults. This is a limitation, discussed in Chapter 5.
 
+**Worked example.** Table 3.1 scores two real holdout episodes for the same question (`5abd94525542992ac4f382d2`, "Which company formed the boy group that debuted with *2014 S/S*?"). Both answer "YG Entertainment" correctly. Under the outcome-only reward (R0) both receive the same reward, 1. VEGR separates them: one is fully grounded, the other has no evidence.
+
+**Table 3.1.** VEGR terms for two correct answers to the same question. Values are taken from `results/2026-10-10-batch/{r1_full_seed8,r0_outcome_seed8}/episodes.jsonl`.
+
+| | Episode A (R1 seed 8) | Episode B (R0 seed 8) |
+|---|---|---|
+| Actions | `SEARCH[S/S 2014 debut South Korean boy group]` → `SEARCH[WINNER YG Entertainment]` → `ANSWER[YG Entertainment] CITATIONS[2014 S/S\|0; Winner (band)\|0]` | `SEARCH[2014 S/S debut album South Korean boy group formed by]` → `ANSWER[YG Entertainment]` |
+| EM | 1 | 1 |
+| F1 | 1 | 1 |
+| Evidence coverage | 1 (both gold sentences cited) | 0 (nothing cited) |
+| Citation precision | 1 | 0 |
+| Retrieval recall | 1 (both gold documents retrieved) | 0.5 (one of two) |
+| − 0.1 · search cost | − 0.1 · 2/3 = − 0.067 | − 0.1 · 1/3 = − 0.033 |
+| − 0.1 · duplicate penalty | 0 | 0 |
+| **VEGR total** | **4.933** | **2.467** |
+| Outcome-only reward (R0) | 1 | 1 |
+
 **Reward variants.** Three variants change one aspect of VEGR at a time:
 
 - **R0, outcome-only (baseline reward).** R = EM. All other weights are 0, but invalid episodes still receive −1. This mirrors outcome-reward search agents such as Search-R1 (Jin et al., 2025†).

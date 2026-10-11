@@ -55,13 +55,20 @@ When the model does complete an episode, it is reasonably capable. EM over compl
 |---|---|---|
 | R0 s7 − B0 | +19.7 | [+14.3, +25.0] |
 | R0 s8 − B0 | +18.3 | [+13.3, +23.3] |
-| R1 s7 − B0 | +20.3 | [+15.0, +25.7]ᵃ |
-| R1 s8 − B0 | +20.3 | [+15.0, +25.3] |
+| R1 s7 − B0 | +20.3 | [+15.0, +25.7] |
+| R1 s8 − B0 | +20.3 | [+15.3, +25.3] |
 | R2 s7 − B0 | +18.7 | [+13.7, +24.0] |
 | R2 s8 − B0 | +26.3 | [+21.0, +31.7] |
 | Seed-9 comparisons | [TODO] | [TODO] |
 
-ᵃ Computed with 5,000 resamples. [TODO: recompute at 10,000.]
+All intervals were recomputed from the per-question episode files with `scripts/make_thesis_figures.py` (10,000 resamples, fixed RNG seed 0). Compared with the earlier ad-hoc computation, endpoints differ by at most 0.3 points, which is resampling noise. Figure 4.5 shows the same intervals, together with the between-reward comparisons.
+
+![Figure 4.5](../figures/fig4_5_bootstrap.png)
+
+**Figure 4.5.** Paired bootstrap differences in holdout EM, with 95% CIs over the 300 holdout questions.
+
+- **Above the dashed line:** each trained run against B0 (RQ1). Every interval lies far to the right of zero.
+- **Below the dashed line:** comparisons between rewards on the same seed (RQ2/RQ3). Three of the four intervals cross zero. The exception, R2 s8 − R1 s8, does not replicate on other seeds (Section 4.6).
 
 **Answer to RQ1: yes.** Every trained run with a computed CI beats B0 by **+18.3 to +26.3 EM points**, and every confidence interval excludes zero. The seed-9 runs (R1 45.3%, R2 38.3%) are also well above B0's 22.3%, but their CIs are not computed yet.
 
@@ -100,6 +107,15 @@ So GRPO mostly teaches the model to produce valid, verifiable actions, and only 
 - Searches per episode stay between 1.91 and 2.30.
 
 Neither shortcut appeared.
+
+Figure 4.3 puts both dimensions together. Every trained run sits in the same accuracy band, roughly 38–49% EM. Along the grounding axis, R0 seed 8 lies far from all the others, at citation precision 0.
+
+![Figure 4.3](../figures/fig4_3_em_vs_precision.png)
+
+**Figure 4.3.** Holdout EM (all episodes, failures counted as 0) against citation precision (completed episodes), one point per run.
+
+- Shape and colour encode the reward. Hollow markers are seed-9 runs, whose values come from the run logs.
+- R1 and R2 cluster at precision 0.70–0.75. R0 seed 7 sits slightly lower, at 0.62. R0 seed 8 reaches the same EM with precision 0.
 
 **Answer to RQ2 (so far).** VEGR matches the accuracy of outcome-only reward and avoids its shortcuts on the seeds run so far. The outcome-only reward can be satisfied without evidence, and which shortcut the policy finds depends on the seed. The finding fits reward hacking theory (Skalse et al., 2022): the outcome-only reward is a proxy that does not include grounding, and on two of two seeds the policy found a way to satisfy the proxy that the intended objective would reject.
 
@@ -143,6 +159,10 @@ The training curve for seed 8 (Figure 4.2) shows when the R0 shortcut appeared. 
 - It cites 1 sentence in 97 episodes, 2 sentences in 182, and 3 in 8.
 - By sentence position, sentence 0 is cited 233 times, sentence 1 161 times, and sentence 2 57 times.
 
+![Figure 4.7](../figures/fig4_7_cited_index.png)
+
+**Figure 4.7.** Position of every sentence cited by R1 seed 8 in its completed holdout episodes (485 citations). 451 of them (93%) point to one of the first three sentences of a paragraph.
+
 The policy prefers a few early sentences, which are usually correct but often not the full gold evidence. HotpotQA's gold support often includes sentences beyond index 0. Under a summed reward, citing one safe sentence already earns full precision and partial coverage, so the policy has little reason to risk adding more. This matches ALCE's observation that citation precision and citation recall are distinct, and that models tend to be precise but incomplete (Gao et al., 2023).
 
 Coverage also varies between seeds. R1 seed 9 has the best EM (45.3%) but the lowest coverage (0.333). Coverage is therefore not a fixed property of the reward, and higher accuracy does not imply more complete citations.
@@ -151,10 +171,18 @@ Coverage also varies between seeds. R1 seed 9 has the best EM (45.3%) but the lo
 
 **R2 (gated penalties) is not better than R1.**
 
-- On seed 8 alone, R2 looked like a clear win: 48.7% against 42.7%, a +6.0-point difference with 95% CI [+1.3, +10.7]. This is the only reward-variant comparison whose CI excludes zero.
-- It **did not replicate**. On seed 7, R2 is 1.7 points below R1 (CI [−7.0, +3.7]). On seed 9, R2 reaches 38.3% against R1's 45.3%.
+- On seed 8 alone, R2 looked like a clear win: 48.7% against 42.7%, a +6.0-point difference with 95% CI [+1.3, +11.0]. This is the only reward-variant comparison whose CI excludes zero.
+- It **did not replicate**. On seed 7, R2 is 1.7 points below R1 (CI [−7.0, +4.0]). On seed 9, R2 reaches 38.3% against R1's 45.3%.
 - The 3-seed means are 42.7% for R2 and 43.6% for R1.
-- R2 also has the widest seed range of any method, from 38.3% to 48.7%.
+- R2 also has the widest seed range of any method, from 38.3% to 48.7% (Figure 4.4).
+
+![Figure 4.4](../figures/fig4_4_em_per_seed.png)
+
+**Figure 4.4.** Holdout EM per seed for each reward. The horizontal bar is the seed mean, and the dotted line is the un-tuned baseline B0 (22.3%).
+
+- R1's three seeds lie within about 3 points of each other, while R2's spread over 10.4 points.
+- Hollow markers (seed 9) are taken from the run logs on the training pod; their raw episode files are not yet downloaded.
+- R0 seed 9 is pending.
 
 This is the kind of result Henderson et al. (2018) and Agarwal et al. (2021) warn about: a single-seed comparison can look significant and still not hold across seeds. Given seed ranges of up to about 10 EM points, **this thesis does not claim method differences smaller than about 6 points**. Every claimed difference must hold across seeds.
 
@@ -183,6 +211,10 @@ The following runs are exploratory follow-ups, designed after the results above 
 | R2 s9 | – | – | – | 14 |
 
 [TODO: per-type breakdown for seed 9.]
+
+![Figure 4.6](../figures/fig4_6_failures.png)
+
+**Figure 4.6.** Failed holdout episodes per run, stacked by failure type (seed-7 and seed-8 runs; seed-9 breakdown pending). Training removes most failures of every type. Evidence failures (invented or unretrievable citations) shrink from 85 to between 3 and 14 in the runs where the agent still cites.
 
 R0 seed 8 has almost no failures, but for a degenerate reason. An answer without citations can never produce an evidence failure, so the citation shortcut removes that failure type entirely.
 

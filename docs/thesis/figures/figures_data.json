@@ -118,5 +118,199 @@
         "n_valid_rollouts": 231
       }
     ]
+  },
+  "episode_sources": {
+    "B0": "results\\2026-10-10-grpo-smoke\\b0_episodes.jsonl",
+    "R0 s7": "results\\2026-10-10-batch\\r0_outcome_seed7\\episodes.jsonl",
+    "R0 s8": "results\\2026-10-10-batch\\r0_outcome_seed8\\episodes.jsonl",
+    "R1 s7": "results\\2026-10-10-grpo-run2\\grpo_run2_episodes.jsonl",
+    "R1 s8": "results\\2026-10-10-batch\\r1_full_seed8\\episodes.jsonl",
+    "R2 s7": "results\\2026-10-10-batch\\r2_gated_seed7\\episodes.jsonl",
+    "R2 s8": "results\\2026-10-10-batch\\r2_gated_seed8\\episodes.jsonl"
+  },
+  "fig4_3_to_4_7": {
+    "points": {
+      "B0": {
+        "em_all": 0.22333333333333333,
+        "citation_precision": 0.6328431372549019,
+        "source": "episodes.jsonl"
+      },
+      "R0 s7": {
+        "em_all": 0.42,
+        "citation_precision": 0.6205035971223022,
+        "source": "episodes.jsonl"
+      },
+      "R0 s8": {
+        "em_all": 0.4066666666666667,
+        "citation_precision": 0.0,
+        "source": "episodes.jsonl"
+      },
+      "R1 s7": {
+        "em_all": 0.4266666666666667,
+        "citation_precision": 0.7505807200929152,
+        "source": "episodes.jsonl"
+      },
+      "R1 s8": {
+        "em_all": 0.4266666666666667,
+        "citation_precision": 0.7259001161440186,
+        "source": "episodes.jsonl"
+      },
+      "R2 s7": {
+        "em_all": 0.41,
+        "citation_precision": 0.7482332155477032,
+        "source": "episodes.jsonl"
+      },
+      "R2 s8": {
+        "em_all": 0.4866666666666667,
+        "citation_precision": 0.7034482758620689,
+        "source": "episodes.jsonl"
+      },
+      "R1 s9": {
+        "em_all": 0.4533333333333333,
+        "citation_precision": 0.754,
+        "source": "writer-brief \u00a74.1 (raw files on pod)"
+      },
+      "R2 s9": {
+        "em_all": 0.38333333333333336,
+        "citation_precision": 0.702,
+        "source": "writer-brief \u00a74.1 (raw files on pod)"
+      }
+    },
+    "seed_points": {
+      "R0": {
+        "R0 s7": 42.0,
+        "R0 s8": 40.666666666666664
+      },
+      "R1": {
+        "R1 s7": 42.66666666666667,
+        "R1 s8": 42.66666666666667,
+        "R1 s9": 45.33333333333333
+      },
+      "R2": {
+        "R2 s7": 41.0,
+        "R2 s8": 48.66666666666667,
+        "R2 s9": 38.333333333333336
+      }
+    },
+    "bootstrap": {
+      "R0 s7 \u2212 B0": {
+        "delta": 19.666666666666664,
+        "low": 14.333333333333334,
+        "high": 25.0,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R0 s8 \u2212 B0": {
+        "delta": 18.333333333333332,
+        "low": 13.333333333333334,
+        "high": 23.333333333333332,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R1 s7 \u2212 B0": {
+        "delta": 20.333333333333332,
+        "low": 15.0,
+        "high": 25.666666666666664,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R1 s8 \u2212 B0": {
+        "delta": 20.333333333333332,
+        "low": 15.333333333333332,
+        "high": 25.333333333333336,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R2 s7 \u2212 B0": {
+        "delta": 18.666666666666668,
+        "low": 13.666666666666666,
+        "high": 24.0,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R2 s8 \u2212 B0": {
+        "delta": 26.333333333333332,
+        "low": 21.0,
+        "high": 31.666666666666664,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R1 s7 \u2212 R0 s7": {
+        "delta": 0.6666666666666667,
+        "low": -4.666666666666667,
+        "high": 6.0,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R1 s8 \u2212 R0 s8": {
+        "delta": 2.0,
+        "low": -2.3333333333333335,
+        "high": 6.333333333333334,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R2 s7 \u2212 R1 s7": {
+        "delta": -1.6666666666666667,
+        "low": -7.000000000000001,
+        "high": 4.0,
+        "n": 300,
+        "resamples": 10000
+      },
+      "R2 s8 \u2212 R1 s8": {
+        "delta": 6.0,
+        "low": 1.3333333333333335,
+        "high": 11.0,
+        "n": 300,
+        "resamples": 10000
+      }
+    },
+    "failures": {
+      "B0": {
+        "evidence": 85,
+        "protocol": 37,
+        "budget": 8
+      },
+      "R0 s7": {
+        "evidence": 14,
+        "protocol": 7,
+        "budget": 1
+      },
+      "R0 s8": {
+        "evidence": 0,
+        "protocol": 1,
+        "budget": 0
+      },
+      "R1 s7": {
+        "evidence": 8,
+        "protocol": 5,
+        "budget": 0
+      },
+      "R1 s8": {
+        "evidence": 8,
+        "protocol": 5,
+        "budget": 0
+      },
+      "R2 s7": {
+        "evidence": 10,
+        "protocol": 7,
+        "budget": 0
+      },
+      "R2 s8": {
+        "evidence": 3,
+        "protocol": 7,
+        "budget": 0
+      }
+    },
+    "cited_sentence_index_r1_s8": {
+      "0": 233,
+      "1": 161,
+      "2": 57,
+      "5": 4,
+      "4": 8,
+      "7": 1,
+      "3": 17,
+      "6": 3,
+      "10": 1
+    }
   }
 }
