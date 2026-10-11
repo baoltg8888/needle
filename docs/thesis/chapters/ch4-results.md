@@ -118,16 +118,25 @@ Two caveats limit how strong this claim is:
 |---|---|
 | R0 seed 7 | 107 |
 | R0 seed 8 | 128 |
+| R1 seed 7 | 8 |
 | R1 seed 8 | 8 |
+| R2 seed 7 | 19 |
 | R2 seed 8 | 20 |
-| Other runs | [TODO: compute from `metrics.jsonl`] |
+| Seed-9 runs | [TODO: metrics.jsonl not yet downloaded from the pod] |
 
 R0 therefore learns from only about half of its questions, and each of those gives only a coarse right-or-wrong signal. VEGR's continuous terms (F1, coverage, precision, recall, penalties) almost always separate the 8 rollouts, so nearly every step produces a gradient.
 
 Our interpretation, which these data support but do not prove, is that with so few informative updates, whatever habit emerges early in R0 training gets reinforced and locked in. That would explain why the failure mode differs between seeds. The R0-dyn run tests this directly (Section 4.6).
 
-`[FIGURE 4.1: Bar chart of skipped steps, R0 vs. R1 vs. R2]`
-`[FIGURE 4.2: Training-curve of citation precision per 32-step block, R0 s8 vs. R1 s8]`
+![Figure 4.1](../figures/fig4_1_skipped_steps.png)
+
+**Figure 4.1.** Number of GRPO training steps skipped because all 8 rollouts in the group received the same reward, out of 256 steps per run. Outcome-only runs (R0, hatched) skip 107–128 steps; VEGR (R1) skips 8 and gated VEGR (R2, dotted) skips 19–20. Source: `metrics.jsonl` of each run; values in `docs/thesis/figures/figures_data.json`.
+
+The training curve for seed 8 (Figure 4.2) shows when the R0 shortcut appeared. Over the first 64 steps, the two rewards produce similar citation precision during training (R0 0.568 and 0.499; R1 0.550 and 0.520). R0 then falls to 0.126 in steps 65–96 and stays at 0.000 for every block from step 97 on, while R1 rises to between 0.62 and 0.76.
+
+![Figure 4.2](../figures/fig4_2_citation_precision.png)
+
+**Figure 4.2.** Mean citation precision of valid training rollouts per 32-step block, seed 8. A valid answer with no citations has precision 0 by definition (Section 3.4). Each point averages 128–256 valid rollouts. These are training rollouts sampled at temperature 1.0, not holdout results. Source: `metrics.jsonl`; script `scripts/make_thesis_figures.py`.
 
 **"Precise but incomplete" citations.** VEGR raises citation precision (about 0.73–0.75, against 0.633 for B0) but not evidence coverage, which ranges from 0.333 to 0.513 across R1 seeds. The citation pattern of R1 seed 8 shows why:
 

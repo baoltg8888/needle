@@ -1,0 +1,122 @@
+{
+  "sources": {
+    "R0 s7": "results\\2026-10-10-batch\\r0_outcome_seed7\\metrics.jsonl",
+    "R0 s8": "results\\2026-10-10-batch\\r0_outcome_seed8\\metrics.jsonl",
+    "R1 s7": "results\\2026-10-10-grpo-run2\\metrics.jsonl",
+    "R1 s8": "results\\2026-10-10-batch\\r1_full_seed8\\metrics.jsonl",
+    "R2 s7": "results\\2026-10-10-batch\\r2_gated_seed7\\metrics.jsonl",
+    "R2 s8": "results\\2026-10-10-batch\\r2_gated_seed8\\metrics.jsonl"
+  },
+  "fig4_1_skipped_steps": {
+    "R0 s7": {
+      "skipped": 107,
+      "total": 256
+    },
+    "R0 s8": {
+      "skipped": 128,
+      "total": 256
+    },
+    "R1 s7": {
+      "skipped": 8,
+      "total": 256
+    },
+    "R1 s8": {
+      "skipped": 8,
+      "total": 256
+    },
+    "R2 s7": {
+      "skipped": 19,
+      "total": 256
+    },
+    "R2 s8": {
+      "skipped": 20,
+      "total": 256
+    }
+  },
+  "fig4_2_citation_precision": {
+    "R0 s8": [
+      {
+        "steps": "1-32",
+        "mean_precision": 0.5677083333333334,
+        "n_valid_rollouts": 128
+      },
+      {
+        "steps": "33-64",
+        "mean_precision": 0.4990138067061144,
+        "n_valid_rollouts": 169
+      },
+      {
+        "steps": "65-96",
+        "mean_precision": 0.12605042016806722,
+        "n_valid_rollouts": 238
+      },
+      {
+        "steps": "97-128",
+        "mean_precision": 0.0,
+        "n_valid_rollouts": 256
+      },
+      {
+        "steps": "129-160",
+        "mean_precision": 0.0,
+        "n_valid_rollouts": 253
+      },
+      {
+        "steps": "161-192",
+        "mean_precision": 0.0,
+        "n_valid_rollouts": 255
+      },
+      {
+        "steps": "193-224",
+        "mean_precision": 0.0,
+        "n_valid_rollouts": 256
+      },
+      {
+        "steps": "225-256",
+        "mean_precision": 0.0,
+        "n_valid_rollouts": 256
+      }
+    ],
+    "R1 s8": [
+      {
+        "steps": "1-32",
+        "mean_precision": 0.55,
+        "n_valid_rollouts": 130
+      },
+      {
+        "steps": "33-64",
+        "mean_precision": 0.5203900709219857,
+        "n_valid_rollouts": 188
+      },
+      {
+        "steps": "65-96",
+        "mean_precision": 0.6540880503144654,
+        "n_valid_rollouts": 212
+      },
+      {
+        "steps": "97-128",
+        "mean_precision": 0.7521929824561403,
+        "n_valid_rollouts": 228
+      },
+      {
+        "steps": "129-160",
+        "mean_precision": 0.6198140200286123,
+        "n_valid_rollouts": 233
+      },
+      {
+        "steps": "161-192",
+        "mean_precision": 0.6475177304964539,
+        "n_valid_rollouts": 235
+      },
+      {
+        "steps": "193-224",
+        "mean_precision": 0.7266666666666667,
+        "n_valid_rollouts": 250
+      },
+      {
+        "steps": "225-256",
+        "mean_precision": 0.7608225108225108,
+        "n_valid_rollouts": 231
+      }
+    ]
+  }
+}
