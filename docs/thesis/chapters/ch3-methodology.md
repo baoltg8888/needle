@@ -198,7 +198,8 @@ for step, question in enumerate(sample(train_split, 256, seed)):
 
 **Statistics.** Following Agarwal et al. (2021) and Henderson et al. (2018), single runs are not treated as conclusive.
 
-- Differences in EM between two models are tested with a **paired bootstrap** over the 300 holdout questions: 10,000 resamples and a 95% percentile confidence interval. A difference is called significant only if the CI excludes 0.
+- Differences in EM and grounded EM are tested with a **paired bootstrap** over the 300 holdout questions: 10,000 resamples (RNG seed 0) and a 95% percentile confidence interval. A difference is called significant only if the CI excludes 0.
+- To compare two **methods**, each question's score is first averaged over the method's three seeds, and the per-question difference of these averages is bootstrapped. This interval reflects uncertainty from the choice of questions, not from the choice of seeds, so the seed standard deviation is reported next to it. A single run is compared with another single run (for example R0-dyn s8 against R0 s8) in the same way, without averaging.
 - Each reward variant is trained with **3 seeds** (7, 8, 9). Results are reported per seed and as the mean across seeds.
 - Since seeds of the same method can differ by several EM points, a method difference is only claimed when it holds across seeds, not when it shows up for a single seed.
 
@@ -225,7 +226,7 @@ The comparisons map onto the research questions:
 
 R0-dyn was run on a single seed (seed 8) as a **diagnostic experiment**, not as one of the main methods.
 
-- **Why one seed (cost).** Dynamic sampling discards zero-variance groups, and R0 seed 8 skipped 128 of its 256 steps. Reaching 256 real updates is therefore expected to take up to about 512 questions, roughly twice the rollouts and cost of a standard run. The budget extension originally planned this test on two seeds. It was cut to one so that the 3-seed runs of the main methods (R0–R4) fit the budget. [TODO: replace "expected" with the actual number of questions drawn and the run time.]
+- **Why one seed (cost).** Dynamic sampling discards zero-variance groups, and R0 seed 8 skipped 128 of its 256 steps. Reaching 256 real updates is therefore expected to take up to about 512 questions, roughly twice the rollouts and cost of a standard run. The budget extension originally planned this test on two seeds. It was cut to one so that the 3-seed runs of the main methods (R0–R4) fit the budget. In the event, the run drew all **512** questions and reached **250** updates, 6 short of the 256 target, because 262 of the drawn groups had zero variance. Its training steps took **2.64 hours** in total (sum of per-step times in `metrics.jsonl`), against 1.1–2.7 hours for the standard runs of the same batch.
 - **Why seed 8.** It is the seed on which outcome-only training collapsed to uncited answers. The question is narrow: does an optimizer-level fix alone prevent this shortcut where it actually happened? A seed on which R0 did not collapse could not answer that.
 - **How it is read.** R0-dyn is interpreted as a case study about mechanism, not as a statistically supported comparison between methods.
 
@@ -240,7 +241,18 @@ R0-dyn was run on a single seed (seed 8) as a **diagnostic experiment**, not as 
 
 This is reported as a limitation when comparing against R1 seed 7. Training and evaluation run offline from local weights, with Hugging Face offline mode on.
 
-**Hardware and cost.** One NVIDIA L40S (48 GB) on RunPod at about $1.10 per hour. One run (training plus holdout evaluation) takes about 2.05 hours, or roughly **$2.25**. The total project budget is about $45. `[TODO: final cost table after the fixes batch]`
+**Hardware and cost.** One NVIDIA L40S (48 GB) on RunPod at about $1.10 per hour. One run (training plus holdout evaluation) takes about 2.05 hours, or roughly **$2.25**. The project was budgeted at about $45. Table 3.2 gives the actual spend, taken from the RunPod balance recorded in each batch log.
+
+**Table 3.2.** Compute cost by batch (approximate; from account balances, including idle time and failed pods).
+
+| Batch | Runs | Cost | Source |
+|---|---|---|---|
+| Smoke test, B0, R1 seed 7 (2026-10-10) | B0 eval, R1 s7 | ≈ $6.2 | `logs/2026-10-10-grpo-run2.md` |
+| Main batch (2026-10-10/11) | R0, R1, R2 on seeds 7–8 (5 runs) | ≈ $16 | `logs/2026-10-10-r0-r1-r2-batch.md` |
+| Fixes batch (2026-10-11/12) | R1/R2 s9, R0 s9, R3 ×3, R4 ×3, R0-dyn s8 (10 runs) | ≈ $26.5 | `logs/2026-10-11-fixes-batch.md` |
+| **Total** | 16 trained runs + baseline | **≈ $49** | |
+
+The total is slightly above the planned $45. The main batch includes about 4.5 hours of idle pod time, and the fixes batch includes a CPU-only restart to download results.
 
 **Reproducibility.**
 

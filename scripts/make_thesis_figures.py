@@ -20,6 +20,14 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "thesis" / "figures"
 BLOCK = 32
 
+FIXES = ROOT / "results/2026-10-11-fixes"
+FIXES_RUNS = {
+    "R0 s9": "r0_outcome_seed9", "R1 s9": "r1_full_seed9", "R2 s9": "r2_gated_seed9",
+    "R3 s7": "r3_coverage2_seed7", "R3 s8": "r3_coverage2_seed8", "R3 s9": "r3_coverage2_seed9",
+    "R4 s7": "r4_drgrpo_seed7", "R4 s8": "r4_drgrpo_seed8", "R4 s9": "r4_drgrpo_seed9",
+    "R0-dyn s8": "r0_dynsample_seed8",
+}
+
 RUNS = {
     "R0 s7": ROOT / "results/2026-10-10-batch/r0_outcome_seed7/metrics.jsonl",
     "R0 s8": ROOT / "results/2026-10-10-batch/r0_outcome_seed8/metrics.jsonl",
@@ -27,13 +35,22 @@ RUNS = {
     "R1 s8": ROOT / "results/2026-10-10-batch/r1_full_seed8/metrics.jsonl",
     "R2 s7": ROOT / "results/2026-10-10-batch/r2_gated_seed7/metrics.jsonl",
     "R2 s8": ROOT / "results/2026-10-10-batch/r2_gated_seed8/metrics.jsonl",
+    **{name: FIXES / "runs" / run / "metrics.jsonl" for name, run in FIXES_RUNS.items()},
 }
+RUN_ORDER = ["R0 s7", "R0 s8", "R0 s9", "R1 s7", "R1 s8", "R1 s9", "R2 s7", "R2 s8", "R2 s9",
+             "R3 s7", "R3 s8", "R3 s9", "R4 s7", "R4 s8", "R4 s9", "R0-dyn s8"]
+METHODS = ["R0", "R1", "R2", "R3", "R4"]
+METHOD_LABEL = {"R0": "R0 outcome-only", "R1": "R1 VEGR", "R2": "R2 gated",
+                "R3": "R3 coverage ×2", "R4": "R4 Dr. GRPO", "R0-dyn": "R0-dyn (1 seed)"}
 
-# Okabe-Ito (colorblind-safe); hatching gives a second, non-color cue.
+# Okabe-Ito (colorblind-safe); hatching and markers give a second, non-color cue.
 STYLE = {
     "R0": {"color": "#D55E00", "hatch": "//", "marker": "s", "linestyle": "--"},
     "R1": {"color": "#0072B2", "hatch": "", "marker": "o", "linestyle": "-"},
     "R2": {"color": "#009E73", "hatch": "..", "marker": "^", "linestyle": ":"},
+    "R3": {"color": "#CC79A7", "hatch": "xx", "marker": "v", "linestyle": "-."},
+    "R4": {"color": "#E69F00", "hatch": "\\\\", "marker": "P", "linestyle": "--"},
+    "R0-dyn": {"color": "#8C3B00", "hatch": "++", "marker": "X", "linestyle": "--"},
 }
 
 
@@ -117,13 +134,7 @@ EPISODES = {
     "R1 s8": ROOT / "results/2026-10-10-batch/r1_full_seed8/episodes.jsonl",
     "R2 s7": ROOT / "results/2026-10-10-batch/r2_gated_seed7/episodes.jsonl",
     "R2 s8": ROOT / "results/2026-10-10-batch/r2_gated_seed8/episodes.jsonl",
-}
-
-# Seed-9 holdout results: raw files are still on the pod. Values are copied from
-# docs/thesis/writer-brief.md section 4.1 (from the pod's batch2.log) until downloaded.
-SEED9_FROM_BRIEF = {
-    "R1 s9": {"em_all": 136 / 300, "citation_precision": 0.754},  # brief: 45.3%
-    "R2 s9": {"em_all": 115 / 300, "citation_precision": 0.702},  # brief: 38.3%
+    **{name: FIXES / "results" / run / "episodes.jsonl" for name, run in FIXES_RUNS.items()},
 }
 
 FAILURE_KINDS = ("evidence", "protocol", "budget")
@@ -139,22 +150,36 @@ def em_all(row: dict) -> float:
     return float(row["metrics"]["answer_exact_match"])
 
 
+def grounded_em(row: dict) -> float:
+    """EM = 1, at least one citation, and every citation a gold fact (precision 1)."""
+    if em_all(row) != 1.0 or not row["citations"]:
+        return 0.0
+    return float(row["metrics"]["citation_precision"] == 1.0)
+
+
 def run_summary(rows: dict[str, dict]) -> dict:
     done = [r for r in rows.values() if r["status"] == "completed"]
     return {
         "em_all": sum(em_all(r) for r in rows.values()) / len(rows),
+        "grounded_em": sum(grounded_em(r) for r in rows.values()) / len(rows),
         "citation_precision": sum(r["metrics"]["citation_precision"] for r in done) / len(done),
         "completed": len(done),
         "failures": {k: sum(r.get("failure_kind") == k for r in rows.values()) for k in FAILURE_KINDS},
     }
 
 
-def paired_bootstrap(a: dict[str, dict], b: dict[str, dict], resamples: int = 10_000,
+def per_question(runs: list[dict[str, dict]], score) -> dict[str, float]:
+    """Score per question, averaged over the given runs (seeds)."""
+    ids = set.intersection(*(set(r) for r in runs))
+    return {q: sum(score(r[q]) for r in runs) / len(runs) for q in ids}
+
+
+def paired_bootstrap(a: dict[str, float], b: dict[str, float], resamples: int = 10_000,
                      seed: int = 0) -> dict:
     import numpy as np
 
     ids = sorted(set(a) & set(b))
-    diff = np.array([em_all(a[q]) - em_all(b[q]) for q in ids])
+    diff = np.array([a[q] - b[q] for q in ids])
     rng = np.random.default_rng(seed)
     means = diff[rng.integers(0, len(ids), size=(resamples, len(ids)))].mean(axis=1)
     low, high = np.percentile(means, [2.5, 97.5])
@@ -163,45 +188,43 @@ def paired_bootstrap(a: dict[str, dict], b: dict[str, dict], resamples: int = 10
 
 
 def method_of(name: str) -> str:
-    return name[:2]
+    return name.split()[0]
 
 
 def ch4_figures() -> dict:
     episodes = {name: episode_table(path) for name, path in EPISODES.items()}
     summaries = {name: run_summary(rows) for name, rows in episodes.items()}
-    points = {name: {"em_all": s["em_all"], "citation_precision": s["citation_precision"],
-                     "source": "episodes.jsonl"} for name, s in summaries.items()}
-    for name, values in SEED9_FROM_BRIEF.items():
-        points[name] = {**values, "source": "writer-brief §4.1 (raw files on pod)"}
+    points = {name: {"em_all": s["em_all"], "grounded_em": s["grounded_em"],
+                     "citation_precision": s["citation_precision"], "completed": s["completed"]}
+              for name, s in summaries.items()}
     style_b0 = {"color": "#666666", "marker": "D", "hatch": "xx", "linestyle": "-"}
 
     def style(name):
         return style_b0 if name == "B0" else STYLE[method_of(name)]
 
-    # Figure 4.3: EM vs. citation precision.
+    # Figure 4.3: EM vs. citation precision, every run.
     from matplotlib.lines import Line2D
 
     fig, ax = plt.subplots(figsize=(5.5, 3.6), layout="constrained")
     for name, p in points.items():
         st = style(name)
-        hollow = name in SEED9_FROM_BRIEF
         ax.scatter(p["em_all"] * 100, p["citation_precision"], s=46, marker=st["marker"],
-                   facecolor="white" if hollow else st["color"], edgecolor=st["color"],
-                   linewidth=1.5, zorder=3)
-    for name, offset in {"B0": (8, -3), "R0 s8": (8, -3), "R0 s7": (8, -9)}.items():
+                   facecolor=st["color"], edgecolor="white", linewidth=1, zorder=3)
+    labels_43 = {"B0": (8, -3), "R0 s7": (8, -3), "R0 s8": (-6, 8), "R0 s9": (0, 8),
+                 "R0-dyn s8": (0, 8)}
+    for name, offset in labels_43.items():
         p = points[name]
         ax.annotate(name, (p["em_all"] * 100, p["citation_precision"]), xytext=offset,
-                    textcoords="offset points", fontsize=7.5)
-    ax.annotate("R1 and R2, all seeds", (43.5, 0.78), xytext=(0, 4), textcoords="offset points",
+                    textcoords="offset points", fontsize=7, ha="center" if offset[0] <= 0 else "left")
+    ax.annotate("R1–R4, all seeds", (43, 0.79), xytext=(0, 4), textcoords="offset points",
                 ha="center", fontsize=7.5)
-    handles = [Line2D([], [], linestyle="", marker=s["marker"], color=s["color"], markersize=6, label=l)
-               for s, l in [(style_b0, "B0 (un-tuned)"), (STYLE["R0"], "R0 outcome-only"),
-                            (STYLE["R1"], "R1 VEGR"), (STYLE["R2"], "R2 gated")]]
-    handles.append(Line2D([], [], linestyle="", marker="o", markerfacecolor="white",
-                          markeredgecolor="#333333", markersize=6, label="hollow = seed 9"))
-    ax.legend(handles=handles, frameon=False, fontsize=7, loc="center left")
+    keys = ["B0", *METHODS, "R0-dyn"]
+    handles = [Line2D([], [], linestyle="", marker=style(k if k == "B0" else k + " x")["marker"],
+                      color=style(k if k == "B0" else k + " x")["color"], markersize=6,
+                      label="B0 (un-tuned)" if k == "B0" else METHOD_LABEL[k]) for k in keys]
+    ax.legend(handles=handles, frameon=False, fontsize=7, loc="lower left")
     ax.set_xlim(15, 55)
-    ax.set_ylim(-0.04, 1.0)
+    ax.set_ylim(-0.06, 1.0)
     ax.set_xlabel("EM on holdout (%), failures count as 0")
     ax.set_ylabel("Citation precision\n(completed episodes)")
     ax.set_title("Same accuracy, different grounding", loc="left")
@@ -209,63 +232,76 @@ def ch4_figures() -> dict:
     fig.savefig(OUT / "fig4_3_em_vs_precision.png", dpi=300)
     plt.close(fig)
 
-    # Figure 4.4: EM per seed for each reward.
-    fig, ax = plt.subplots(figsize=(5.0, 3.0), layout="constrained")
-    methods = ["R0", "R1", "R2"]
+    # Figure 4.4: EM and grounded EM per seed for each method (two panels, one y-scale).
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 3.2), layout="constrained", sharey=True)
     seed_points = {}
-    for i, method in enumerate(methods):
-        names = [n for n in points if method_of(n) == method]
-        values = [points[n]["em_all"] * 100 for n in names]
-        seed_points[method] = dict(zip(names, values))
-        st = STYLE[method]
-        for n, v in zip(names, values):
-            hollow = n in SEED9_FROM_BRIEF
-            x = i + {"s7": -0.12, "s8": 0.0, "s9": 0.12}[n.split()[1]]
-            ax.scatter(x, v, s=46, marker=st["marker"], facecolor="white" if hollow else st["color"],
-                       edgecolor=st["color"], linewidth=1.5, zorder=3)
-            ax.annotate(n.split()[1], (x, v), xytext=(0, 7), textcoords="offset points",
-                        ha="center", fontsize=7)
-        mean = sum(values) / len(values)
-        ax.hlines(mean, i - 0.25, i + 0.25, color="#333333", linewidth=1.5)
-        ax.annotate(f"mean {mean:.1f}", (i - 0.25, mean), xytext=(-4, 0), textcoords="offset points",
-                    ha="right", va="center", fontsize=7)
-    ax.axhline(points["B0"]["em_all"] * 100, color="#666666", linestyle=":", linewidth=1)
-    ax.text(2.45, points["B0"]["em_all"] * 100 + 0.8, "B0", color="#666666", fontsize=7.5)
-    ax.set_xticks(range(3), ["R0 (outcome-only)\n2 seeds [TODO s9]", "R1 (VEGR)\n3 seeds", "R2 (gated)\n3 seeds"])
-    ax.set_xlim(-0.7, 2.7)
-    ax.set_ylim(15, 55)
-    ax.set_ylabel("EM on holdout (%)")
-    ax.set_title("Holdout EM per seed", loc="left")
+    for ax, key, title in zip(axes, ("em_all", "grounded_em"), ("EM", "Grounded EM")):
+        seed_points[key] = {}
+        for i, method in enumerate(METHODS):
+            names = [n for n in RUN_ORDER if method_of(n) == method]
+            values = [points[n][key] * 100 for n in names]
+            seed_points[key][method] = dict(zip(names, values))
+            st = STYLE[method]
+            for n, v in zip(names, values):
+                x = i + {"s7": -0.15, "s8": 0.0, "s9": 0.15}[n.split()[1]]
+                ax.scatter(x, v, s=36, marker=st["marker"], facecolor=st["color"],
+                           edgecolor="white", linewidth=1, zorder=3)
+            mean = sum(values) / len(values)
+            ax.hlines(mean, i - 0.28, i + 0.28, color="#333333", linewidth=1.5)
+            ax.annotate(f"{mean:.1f}", (i + 0.28, mean), xytext=(2, 0), textcoords="offset points",
+                        ha="left", va="center", fontsize=6.5)
+        dyn = points["R0-dyn s8"][key] * 100
+        ax.scatter(5, dyn, s=40, marker=STYLE["R0-dyn"]["marker"], color=STYLE["R0-dyn"]["color"], zorder=3)
+        ax.axhline(points["B0"][key] * 100, color="#666666", linestyle=":", linewidth=1)
+        ax.text(5.45, points["B0"][key] * 100 + 0.8, "B0", color="#666666", fontsize=7, ha="right")
+        ax.set_xticks(range(6), [*METHODS, "R0-dyn\n(s8)"], fontsize=7.5)
+        ax.set_xlim(-0.6, 5.6)
+        ax.set_title(title, loc="left")
+    axes[0].set_ylim(-2, 55)
+    axes[0].set_ylabel("Holdout score (%), 300 questions")
+    fig.suptitle("Per-seed holdout scores (dots = seeds 7, 8, 9; bar = mean)", x=0.02, ha="left",
+                 fontsize=9)
     fig.savefig(OUT / "fig4_4_em_per_seed.pdf")
     fig.savefig(OUT / "fig4_4_em_per_seed.png", dpi=300)
     plt.close(fig)
 
-    # Figure 4.5: paired bootstrap forest plot.
-    comparisons = [("R0 s7", "B0"), ("R0 s8", "B0"), ("R1 s7", "B0"), ("R1 s8", "B0"),
-                   ("R2 s7", "B0"), ("R2 s8", "B0"), ("R1 s7", "R0 s7"), ("R1 s8", "R0 s8"),
-                   ("R2 s7", "R1 s7"), ("R2 s8", "R1 s8")]
-    boot = {f"{a} − {b}": paired_bootstrap(episodes[a], episodes[b]) for a, b in comparisons}
-    fig, ax = plt.subplots(figsize=(5.5, 3.6), layout="constrained")
-    labels = list(boot)
-    for y, label in enumerate(reversed(labels)):
-        r = boot[label]
-        color = STYLE[method_of(label)]["color"]
-        ax.errorbar(r["delta"], y, xerr=[[r["delta"] - r["low"]], [r["high"] - r["delta"]]],
-                    fmt=STYLE[method_of(label)]["marker"], color=color, capsize=3, markersize=5)
-    ax.axvline(0, color="#333333", linewidth=1)
-    ax.axhline(3.5, color="#BBBBBB", linewidth=0.8, linestyle="--")
-    ax.text(-8.5, 3.75, "vs. B0 (RQ1)", fontsize=7, ha="left", va="bottom", color="#555555")
-    ax.text(15, 3.25, "between rewards (RQ2/RQ3)", fontsize=7, ha="left", va="top", color="#555555")
-    ax.set_yticks(range(len(labels)), list(reversed(labels)))
-    ax.set_xlabel("ΔEM (points), paired bootstrap 95% CI")
-    ax.set_title("Paired differences in holdout EM", loc="left")
+    # Figure 4.5: paired bootstrap over questions, scores averaged over seeds 7/8/9.
+    by_method = {m: [episodes[n] for n in RUN_ORDER if method_of(n) == m] for m in METHODS}
+    by_method["B0"] = [episodes["B0"]]
+    by_method["R0 s8"] = [episodes["R0 s8"]]
+    by_method["R0-dyn s8"] = [episodes["R0-dyn s8"]]
+    comparisons = [("R0", "B0"), ("R1", "B0"), ("R2", "B0"), ("R3", "B0"), ("R4", "B0"),
+                   ("R1", "R0"), ("R2", "R1"), ("R3", "R1"), ("R4", "R1"), ("R0-dyn s8", "R0 s8")]
+    boot = {}
+    for metric, score in (("em", em_all), ("grounded_em", grounded_em)):
+        boot[metric] = {f"{a} − {b}": paired_bootstrap(per_question(by_method[a], score),
+                                                       per_question(by_method[b], score))
+                        for a, b in comparisons}
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 3.6), layout="constrained", sharey=True)
+    labels = [f"{a} − {b}" for a, b in comparisons]
+    for ax, metric, title in zip(axes, ("em", "grounded_em"), ("ΔEM", "ΔGrounded EM")):
+        for y, label in enumerate(reversed(labels)):
+            r = boot[metric][label]
+            st = STYLE[method_of(label)]
+            ax.errorbar(r["delta"], y, xerr=[[r["delta"] - r["low"]], [r["high"] - r["delta"]]],
+                        fmt=st["marker"], color=st["color"], capsize=3, markersize=5)
+        ax.axvline(0, color="#333333", linewidth=1)
+        ax.axhline(4.5, color="#BBBBBB", linewidth=0.8, linestyle="--")
+        ax.set_xlabel(f"{title} (points), 95% CI")
+    axes[0].set_yticks(range(len(labels)), list(reversed(labels)))
+    axes[1].text(0.98, 0.98, "vs. B0 (RQ1)", transform=axes[1].transAxes, fontsize=7,
+                 va="top", ha="right", color="#555555")
+    axes[1].text(0.98, 0.02, "between methods\n(RQ2/RQ3)", transform=axes[1].transAxes,
+                 fontsize=7, va="bottom", ha="right", color="#555555")
+    fig.suptitle("Paired differences on the holdout (method scores averaged over seeds 7–9)",
+                 x=0.02, ha="left", fontsize=9)
     fig.savefig(OUT / "fig4_5_bootstrap.pdf")
     fig.savefig(OUT / "fig4_5_bootstrap.png", dpi=300)
     plt.close(fig)
 
     # Figure 4.6: failure breakdown.
-    fig, ax = plt.subplots(figsize=(5.5, 3.0), layout="constrained")
-    names = list(summaries)
+    fig, ax = plt.subplots(figsize=(7.0, 3.0), layout="constrained")
+    names = ["B0", *RUN_ORDER]
     kind_style = {"evidence": ("#CC79A7", ""), "protocol": ("#E69F00", "//"), "budget": ("#56B4E9", "..")}
     bottoms = [0] * len(names)
     for kind in FAILURE_KINDS:
@@ -275,8 +311,8 @@ def ch4_figures() -> dict:
                edgecolor="white", width=0.7, label=kind)
         bottoms = [b + v for b, v in zip(bottoms, values)]
     for i, total in enumerate(bottoms):
-        ax.text(i, total + 2, str(total), ha="center", fontsize=7.5)
-    ax.set_xticks(range(len(names)), names)
+        ax.text(i, total + 2, str(total), ha="center", fontsize=7)
+    ax.set_xticks(range(len(names)), names, rotation=45, ha="right", fontsize=7.5)
     ax.set_ylabel("Failed episodes (of 300)")
     ax.set_title("Failed holdout episodes by type", loc="left")
     ax.legend(frameon=False, fontsize=7.5)
@@ -306,7 +342,9 @@ def ch4_figures() -> dict:
     fig.savefig(OUT / "fig4_7_cited_index.png", dpi=300)
     plt.close(fig)
 
-    return {"points": points, "seed_points": seed_points, "bootstrap": boot,
+    return {"points": points, "seed_points": seed_points,
+            "bootstrap": {"note": "per-question scores averaged over seeds 7/8/9 per method; "
+                                  "10k resamples, RNG seed 0", **boot},
             "failures": {n: summaries[n]["failures"] for n in names},
             "cited_sentence_index_r1_s8": cited}
 
@@ -320,26 +358,27 @@ def main() -> None:
 
     # Figure 4.1
     skipped = {name: skipped_steps(rows) for name, rows in data.items()}
-    fig, ax = plt.subplots(figsize=(5.5, 3.0), layout="constrained")
-    names = list(skipped)
+    fig, ax = plt.subplots(figsize=(7.0, 3.2), layout="constrained")
+    names = RUN_ORDER
     for i, name in enumerate(names):
         count, total = skipped[name]
-        style = STYLE[name[:2]]
+        style = STYLE[method_of(name)]
         ax.bar(i, count, color=style["color"], hatch=style["hatch"], edgecolor="white", width=0.7)
-        ax.text(i, count + 3, f"{count}", ha="center", va="bottom")
-    ax.set_xticks(range(len(names)), names)
-    ax.set_ylim(0, 256)
-    ax.set_ylabel(f"Skipped steps (of {skipped[names[0]][1]})")
+        ax.text(i, count + 3, f"{count}" if total == 256 else f"{count}\n/{total}", ha="center",
+                va="bottom", fontsize=7)
+    ax.set_xticks(range(len(names)), names, rotation=45, ha="right", fontsize=7.5)
+    ax.set_ylim(0, 300)
+    ax.set_ylabel("Skipped steps (of 256;\nR0-dyn: of 512 drawn)")
     ax.set_title("Zero-variance GRPO steps skipped during training", loc="left")
     fig.savefig(OUT / "fig4_1_skipped_steps.pdf")
     fig.savefig(OUT / "fig4_1_skipped_steps.png", dpi=300)
     plt.close(fig)
 
     # Figure 4.2
-    curves = {name: precision_by_block(data[name]) for name in ("R0 s8", "R1 s8")}
+    curves = {name: precision_by_block(data[name][:256]) for name in ("R0 s8", "R1 s8")}
     fig, ax = plt.subplots(figsize=(5.5, 3.0), layout="constrained")
     for name, blocks in curves.items():
-        style = STYLE[name[:2]]
+        style = STYLE[method_of(name)]
         xs = [i for i, b in enumerate(blocks) if b["mean_precision"] is not None]
         ys = [blocks[i]["mean_precision"] for i in xs]
         ax.plot(xs, ys, color=style["color"], marker=style["marker"],
@@ -364,7 +403,11 @@ def main() -> None:
         "episode_sources": {name: str(path.relative_to(ROOT)) for name, path in EPISODES.items()},
         "fig4_3_to_4_7": ch4,
     }
-    print(json.dumps({k: {kk: round(vv, 1) for kk, vv in v.items() if kk != "n" and kk != "resamples"} for k, v in ch4["bootstrap"].items()}))
+    for metric in ("em", "grounded_em"):
+        print(metric, json.dumps({k: [round(v[x], 1) for x in ("delta", "low", "high")]
+                                  for k, v in ch4["bootstrap"][metric].items()}, ensure_ascii=False))
+    print(json.dumps({n: {k: round(v, 3) if isinstance(v, float) else v for k, v in p.items()}
+                      for n, p in ch4["points"].items()}))
     print(json.dumps(ch4["failures"]), json.dumps(ch4["cited_sentence_index_r1_s8"]))
     (OUT / "figures_data.json").write_text(json.dumps(provenance, indent=2), encoding="utf-8")
     print(json.dumps(provenance["fig4_1_skipped_steps"]))

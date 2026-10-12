@@ -62,9 +62,12 @@
 \pagenumbering{roman}
 
 \abstrak{%
-    [TODO: abstract, written last; see the abstract notes in docs/thesis/outline.md.]
+    % English source: docs/thesis/chapters/abstract.md (keep the two in sync).
+    Search agents trained with reinforcement learning (RL) are usually rewarded only for a correct final answer. That reward does not show whether the agent found, used or can point to the evidence behind the answer, and existing rewards for evidence rely on costly LLM judges. This thesis proposes a judge-free reward for training search agents called VEGR (Verifiable Evidence-Grounded Reward). The agent answers with sentence-level citations, and VEGR checks every citation by rule against HotpotQA's gold supporting facts. It rewards correct answers, correct and complete citations, and useful searches, and it penalises invented citations and malformed actions. A Qwen2.5-7B-Instruct agent with LoRA, which searches each question's paragraphs with BM25, was trained with GRPO on a single 48~GB GPU. Sixteen runs were trained for about \$49 in total, covering five configurations on three seeds each and one diagnostic run. All were evaluated on a frozen 300-question holdout, with paired bootstrap confidence intervals.
+
+    GRPO training improved exact match (EM) by about 20 points over the un-tuned model (22.3\%), mostly by teaching the agent to produce valid actions. The answer-only reward and VEGR reached the same accuracy (42.6\% vs.\ 43.6\% EM; difference +1.0, 95\% CI [$-$1.9, +3.8]). Under the answer-only reward, however, all three seeds developed a shortcut. Two stopped citing evidence entirely, and the third repeated the same search. VEGR kept citation precision at 0.73--0.75 on every seed and raised grounded EM (a correct answer with only gold citations) by 24.4 points (CI [+20.9, +28.1]). Gated penalties and Dr.\ GRPO advantages made no measurable difference, and a larger coverage weight raised evidence coverage only at the cost of precision. Dynamic sampling made the answer-only agent more accurate (+8.0 EM, one seed) but did not stop the citation shortcut. The shortcut therefore comes from the reward, not only from the optimizer. Grounded search agents can be trained cheaply, but the reward has to ask for the evidence, not just the answer.
 }{%
-    search agents, reinforcement learning, GRPO, reward design, evidence grounding, multi-hop question answering
+    search agents, reinforcement learning, GRPO, verifiable rewards, citation grounding, multi-hop question answering, HotpotQA
 }%
 
 \addalllist{}
@@ -74,6 +77,7 @@
 \input{chapters-telu/ch2-literature-review}
 \input{chapters-telu/ch3-methodology}
 \input{chapters-telu/ch4-results}
+\input{chapters-telu/ch5-conclusion}
 
 \renewcommand{\thesection}{\Alph{section}}
 \input{chapters-telu/appendix-a-prompt}

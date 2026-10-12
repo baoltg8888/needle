@@ -1,7 +1,7 @@
 # Chapter 1 — Introduction
 
 > **DRAFT — not submission-ready.**
-> - Results are as of 2026-10-11. The fixes batch (R0 seed 9, R3, R4, R0-dyn, grounded EM) is pending, and claims that depend on it are marked `[TODO]`.
+> - Results are final as of 2026-10-12 (all 16 trained runs; Chapter 4).
 > - Citation venues were checked on 2026-10-11; see the reference table in Chapter 2.
 > - Claims about how *other* papers report their experiments (number of GPUs, number of runs) come from the project notes and must be checked against each paper before submission. They are marked ‡.
 
@@ -39,8 +39,12 @@ HotpotQA (Yang et al., 2018) offers a way to address G1 and G2 together. Its que
 ## 1.5 Contributions
 
 1. **VEGR**, a judge-free, sentence-level reward for training search agents. Every term is checked by rule against gold supporting facts. VEGR also enforces the action protocol: invented citations, malformed actions, and running out of budget all receive a −1 penalty. The individual reward terms are not new; the contribution is the combination and the controlled evaluation of it.
-2. **Evidence that answer-only GRPO produces seed-dependent shortcuts.** On holdout evaluation, one outcome-only run stopped citing entirely (citation precision 0.00), and another repeated searches in 229 of its 278 completed episodes. The VEGR runs reached similar accuracy and kept citation precision at about 0.73–0.75 across three seeds. The training logs point to a likely cause: outcome-only runs skipped 107 and 128 of 256 training steps because all rollouts in a group received the same reward. `[TODO: update with R0 seed 9]`
-3. **A controlled multi-seed comparison** with paired bootstrap confidence intervals, which separates reward design from optimizer fixes. It shows that a single-seed improvement of +6 EM points (gated penalties, R2) did not replicate across seeds. `[TODO: add R3/R4/R0-dyn findings]`
+2. **Evidence that answer-only GRPO produces shortcuts.** On holdout evaluation, two of three outcome-only seeds stopped citing entirely (citation precision 0.00), and the third repeated searches in 229 of its 278 completed episodes. The VEGR runs reached the same accuracy (+1.0 EM points, 95% CI [−1.9, +3.8]) but **24.4 points higher grounded EM** (CI [+20.9, +28.1]), with citation precision at 0.73–0.75 on every seed.
+3. **A controlled multi-seed comparison** with paired bootstrap confidence intervals, which separates reward design from optimizer fixes. It shows that:
+   - a single-seed improvement of +6 EM points (gated penalties, R2) did not replicate across seeds;
+   - doubling the coverage weight (R3) raises evidence coverage but lowers grounded EM by 8.0 points;
+   - Dr. GRPO advantages (R4) make no measurable difference;
+   - dynamic sampling (R0-dyn, one seed) raises outcome-only accuracy by 8 points but does not prevent the citation shortcut. The shortcut comes from the reward, not only from the optimizer.
 4. **An open, reproducible single-GPU pipeline.** One training run plus evaluation costs about $2.25 on one 48 GB GPU, and splits, configs, logs and per-episode results are all released in the repository.
 
 ## 1.6 Scope and limitations
