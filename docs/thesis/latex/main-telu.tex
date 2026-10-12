@@ -34,7 +34,9 @@
   \fi}
 \makeatother
 \setlength{\emergencystretch}{3em}
-\setlength{\tabcolsep}{6pt} % the class's 10pt is too wide for the 8-column results tables
+\setlength{\tabcolsep}{4pt} % the class's 10pt is too wide for the 11-column results tables
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\small}
 \renewcommand{\arraystretch}{1.2}
 
 % Unicode symbols used in the drafts, typeset as math.

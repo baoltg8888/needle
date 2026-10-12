@@ -152,6 +152,11 @@ local function hangul_code(block)
   }
   local tex = block.text:gsub("[\\{}$&#%%_^~%[%]]", escapes)
   tex = tex:gsub("(\\_)", "%1\\allowbreak{}"):gsub("([/%.%-])", "%1\\allowbreak{}")
+  tex = tex:gsub("({%[})", "%1\\allowbreak{}") -- ANSWER[…] CITATIONS[…] actions
+  -- Long hex IDs (HotpotQA question ids) have no natural break point: allow one every 4 chars.
+  if block.text:match("^%x+$") and #block.text > 16 then
+    tex = tex:gsub("(%x%x%x%x)", "%1\\allowbreak{}")
+  end
   return pandoc.RawInline("latex", "\\texttt{" .. tex .. "}")
 end
 
