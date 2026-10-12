@@ -32,9 +32,9 @@ Each training episode follows the same loop (Figure~\ref{fig:3.1}):
 \item
   The agent receives a HotpotQA question.
 \item
-  It emits one action per turn: either \texttt{SEARCH{[}query{]}} or a
-  terminal
-  \texttt{ANSWER{[}.\allowbreak{}.\allowbreak{}.\allowbreak{}{]} CITATIONS{[}.\allowbreak{}.\allowbreak{}.\allowbreak{}{]}}.
+  It emits one action per turn: either
+  \texttt{SEARCH{[}\allowbreak{}query{]}} or a terminal
+  \texttt{ANSWER{[}\allowbreak{}.\allowbreak{}.\allowbreak{}.\allowbreak{}{]} CITATIONS{[}\allowbreak{}.\allowbreak{}.\allowbreak{}.\allowbreak{}{]}}.
 \item
   The environment runs the search with BM25 over the question's own
   paragraphs and returns the results, or validates the answer and
@@ -60,7 +60,8 @@ Each training episode follows the same loop (Figure~\ref{fig:3.1}):
   The agent receives a HotpotQA question and takes up to 3
   \texttt{SEARCH} actions over the question's 10 paragraphs.
 \item
-  It ends with \texttt{ANSWER{[}a{]} CITATIONS{[}title|index; …{]}}.
+  It ends with
+  \texttt{ANSWER{[}\allowbreak{}a{]} CITATIONS{[}\allowbreak{}title|index; …{]}}.
 \item
   The finished episode is scored by VEGR against the gold answer and
   supporting facts.
@@ -155,10 +156,10 @@ action:
 \begin{itemize}
 \tightlist
 \item
-  \texttt{SEARCH{[}query{]}} runs a BM25 search and spends one unit of
-  budget.
+  \texttt{SEARCH{[}\allowbreak{}query{]}} runs a BM25 search and spends
+  one unit of budget.
 \item
-  \texttt{ANSWER{[}answer{]} CITATIONS{[}title|index; title|index; .\allowbreak{}.\allowbreak{}.\allowbreak{}{]}}
+  \texttt{ANSWER{[}\allowbreak{}answer{]} CITATIONS{[}\allowbreak{}title|index; title|index; .\allowbreak{}.\allowbreak{}.\allowbreak{}{]}}
   gives the final answer together with the cited evidence sentences.
   This action ends the episode.
 \end{itemize}
@@ -185,12 +186,13 @@ Invalid episodes receive the protocol penalty of −1 during training
 (Section~\ref{sec:3.7}).
 
 \textbf{Known loophole.} An answer with an empty citation list
-(\texttt{ANSWER{[}x{]}} or \texttt{ANSWER{[}x{]} CITATIONS{[}{]}}) is
-accepted as valid. The prompt itself allows \texttt{CITATIONS{[}{]}} for
-the case where no citation can be validated. We did not close this
-loophole, so that every run is trained and evaluated in the same
-environment. Chapter~\ref{sec:4} reports how the answer-only reward
-exploited it.
+(\texttt{ANSWER{[}\allowbreak{}x{]}} or
+\texttt{ANSWER{[}\allowbreak{}x{]} CITATIONS{[}\allowbreak{}{]}}) is
+accepted as valid. The prompt itself allows
+\texttt{CITATIONS{[}\allowbreak{}{]}} for the case where no citation can
+be validated. We did not close this loophole, so that every run is
+trained and evaluated in the same environment. Chapter~\ref{sec:4}
+reports how the answer-only reward exploited it.
 
 \subsection{Proposed reward: VEGR}\label{sec:3.4}
 
@@ -270,7 +272,8 @@ controlled evaluation of what the combination changes
 limitation, discussed in Chapter~\ref{sec:5}.
 
 \textbf{Worked example.} Table~\ref{tbl:3.1} scores two real holdout
-episodes for the same question (\texttt{5abd94525542992ac4f382d2},
+episodes for the same question
+(\texttt{5abd\allowbreak{}9452\allowbreak{}5542\allowbreak{}992a\allowbreak{}c4f3\allowbreak{}82d2\allowbreak{}},
 ``Which company formed the boy group that debuted with \emph{2014
 S/S}?''). Both answer ``YG Entertainment'' correctly. Under the
 outcome-only reward (R0) both receive the same reward, 1. VEGR separates
@@ -304,12 +307,12 @@ Episode B (R0 seed 8)
 \bottomrule\noalign{}
 \endlastfoot
 Actions &
-\texttt{SEARCH{[}S/\allowbreak{}S 2014 debut South Korean boy group{]}}
-→ \texttt{SEARCH{[}WINNER YG Entertainment{]}} →
-\texttt{ANSWER{[}YG Entertainment{]} CITATIONS{[}2014 S/\allowbreak{}S\textbackslash{}|0; Winner (band)\textbackslash{}|0{]}}
+\texttt{SEARCH{[}\allowbreak{}S/\allowbreak{}S 2014 debut South Korean boy group{]}}
+→ \texttt{SEARCH{[}\allowbreak{}WINNER YG Entertainment{]}} →
+\texttt{ANSWER{[}\allowbreak{}YG Entertainment{]} CITATIONS{[}\allowbreak{}2014 S/\allowbreak{}S\textbackslash{}|0; Winner (band)\textbackslash{}|0{]}}
 &
-\texttt{SEARCH{[}2014 S/\allowbreak{}S debut album South Korean boy group formed by{]}}
-→ \texttt{ANSWER{[}YG Entertainment{]}} \\
+\texttt{SEARCH{[}\allowbreak{}2014 S/\allowbreak{}S debut album South Korean boy group formed by{]}}
+→ \texttt{ANSWER{[}\allowbreak{}YG Entertainment{]}} \\
 EM & 1 & 1 \\
 F1 & 1 & 1 \\
 Evidence coverage & 1 (both gold sentences cited) & 0 (nothing cited) \\
@@ -359,7 +362,7 @@ It is wrapped in the model's chat template. The prompt:
   Describes the role (``You are a careful evidence-seeking QA agent'').
 \item
   States the action grammar, gives a worked example
-  (\texttt{ANSWER{[}United States{]} CITATIONS{[}Ursula K.\allowbreak{} Le Guin|1; The Left Hand of Darkness|1{]}}),
+  (\texttt{ANSWER{[}\allowbreak{}United States{]} CITATIONS{[}\allowbreak{}Ursula K.\allowbreak{} Le Guin|1; The Left Hand of Darkness|1{]}}),
   and lists formatting rules: one \texttt{title|index} per citation,
   semicolon-separated, no text after the closing bracket, titles copied
   exactly, never invent a title.
@@ -367,8 +370,8 @@ It is wrapped in the model's chat template. The prompt:
   Gives the question and the remaining search budget.
 \item
   Lists all search results so far. For each search, it shows the query
-  and then every returned document as \texttt{{[}Title{]}} followed by
-  \texttt{index: sentence} lines.
+  and then every returned document as \texttt{{[}\allowbreak{}Title{]}}
+  followed by \texttt{index: sentence} lines.
 \end{enumerate}
 
 The prompt is rebuilt from scratch every turn, so the model always sees

@@ -658,8 +658,8 @@ entirely.
 holdout episode logs.
 
 \emph{Trace 1: same question, three behaviours} (question
-\texttt{5adbf0a255429947ff17385a}). All three policies answer correctly
-(EM = 1).
+\texttt{5adb\allowbreak{}f0a2\allowbreak{}5542\allowbreak{}9947\allowbreak{}ff17\allowbreak{}385a\allowbreak{}}).
+All three policies answer correctly (EM = 1).
 
 \begin{Verbatim}
 R1 s8:  SEARCH[Laleli Mosque Esma Sultan Mansion location]
@@ -688,8 +688,8 @@ R0 s7:  SEARCH[neighborhood of Laleli Mosque and Esma Sultan Mansion]
 \end{itemize}
 
 \emph{Trace 2: finding the evidence but not citing it}
-(\texttt{5abd94525542992ac4f382d2}, the question of Table~\ref{tbl:3.1}
-and Appendix A).
+(\texttt{5abd\allowbreak{}9452\allowbreak{}5542\allowbreak{}992a\allowbreak{}c4f3\allowbreak{}82d2\allowbreak{}},
+the question of Table~\ref{tbl:3.1} and Appendix A).
 
 \begin{Verbatim}
 R1 s8:      SEARCH[S/S 2014 debut South Korean boy group]
@@ -715,9 +715,9 @@ answer without citing them. Their search behaviour is multi-hop; their
 answers are unsupported.
 
 \emph{Trace 3: more citations, fewer of them gold (R3 s8)}
-(\texttt{5ae7a8175542993210983ed8}). The answer is correct, but only one
-of the three cited sentences is a gold fact (precision 0.33, coverage
-0.33):
+(\texttt{5ae7\allowbreak{}a817\allowbreak{}5542\allowbreak{}9932\allowbreak{}1098\allowbreak{}3ed8\allowbreak{}}).
+The answer is correct, but only one of the three cited sentences is a
+gold fact (precision 0.33, coverage 0.33):
 
 \begin{Verbatim}
 R3 s8:  ANSWER[Pedro Rodríguez] CITATIONS[Formula One drivers from Mexico|1;
@@ -729,17 +729,19 @@ weight encourages the policy to add citations, and some of the additions
 are not gold.
 
 \emph{Trace 4: an evidence failure (R1 s8).} The final action
-\texttt{ANSWER{[}yes{]} CITATIONS{[}Ambroise Thomas|0; Provesi|1{]}}
-(question \texttt{5ab29c24554299449642c932}) was marked invalid as an
-evidence failure: ``citation references unknown document `Provesi'\,''.
-The model cited a document title that had not appeared in any of its
-search results. Even after training, invented or unretrievable citations
-remain the most common failure type for R1--R4 (Table~\ref{tbl:4.5}).
+\texttt{ANSWER{[}\allowbreak{}yes{]} CITATIONS{[}\allowbreak{}Ambroise Thomas|0; Provesi|1{]}}
+(question
+\texttt{5ab2\allowbreak{}9c24\allowbreak{}5542\allowbreak{}9944\allowbreak{}9642\allowbreak{}c932\allowbreak{}})
+was marked invalid as an evidence failure: ``citation references unknown
+document `Provesi'\,''. The model cited a document title that had not
+appeared in any of its search results. Even after training, invented or
+unretrievable citations remain the most common failure type for R1--R4
+(Table~\ref{tbl:4.5}).
 
 \emph{Trace 5: a protocol failure caused by the citation format (R1 s9)}
-(\texttt{5a8a3e745542996c9b8d5e70}). After three searches (two of them
-identical), the agent answered
-\texttt{ANSWER{[}Adventure{]} CITATIONS{[}Tunnels \&amp; Trolls|0{]}}.
+(\texttt{5a8a\allowbreak{}3e74\allowbreak{}5542\allowbreak{}996c\allowbreak{}9b8d\allowbreak{}5e70\allowbreak{}}).
+After three searches (two of them identical), the agent answered
+\texttt{ANSWER{[}\allowbreak{}Adventure{]} CITATIONS{[}\allowbreak{}Tunnels \&amp; Trolls|0{]}}.
 The model wrote the title's ``\&'' as the HTML entity \texttt{\&amp;},
 and the \texttt{;} inside the entity was read as the separator between
 two citations. The parser then rejected ``Tunnels \&amp'' as a citation
