@@ -130,19 +130,42 @@ EM (all) counts failures as 0. Other columns are means over completed episodes.
 | B0 | – | 22.3% | 170 | 0.501 | 0.472 | 0.633 | 0.829 | 1.92 |
 | R0 | 7 | 42.0% | 278 | 0.576 | 0.438 | 0.621 | 0.829 | 3.00 |
 | R0 | 8 | 40.7% | 299 | 0.530 | **0.000** | **0.000** | 0.710 | **1.01** |
-| R0 | 9 | PENDING | | | | | | |
+| R0 | 9 | 45.0% | 298 | 0.577 | **0.000** | **0.000** | 0.860 | 2.27 |
 | R1 (VEGR) | 7 | 42.7% | 287 | 0.593 | 0.473 | 0.751 | 0.851 | 2.30 |
 | R1 (VEGR) | 8 | 42.7% | 287 | 0.574 | 0.513 | 0.726 | 0.836 | 2.15 |
 | R1 (VEGR) | 9 | 45.3% | 293 | 0.598 | 0.333 | 0.754 | 0.837 | 1.91 |
 | R2 (gated) | 7 | 41.0% | 283 | 0.577 | 0.539 | 0.748 | 0.891 | 2.21 |
 | R2 (gated) | 8 | 48.7% | 290 | 0.625 | 0.440 | 0.703 | 0.879 | 2.00 |
 | R2 (gated) | 9 | 38.3% | 286 | 0.552 | 0.471 | 0.702 | 0.855 | 2.16 |
-| R3, R4, R0-dyn | 7/8/9 | PENDING | | | | | | |
+| R3 (cov ×2) | 7 | 41.3% | 289 | 0.570 | 0.607 | 0.701 | 0.854 | 2.01 |
+| R3 (cov ×2) | 8 | 41.0% | 284 | 0.574 | 0.545 | 0.633 | 0.820 | 1.61 |
+| R3 (cov ×2) | 9 | 44.7% | 282 | 0.602 | 0.557 | 0.738 | 0.882 | 2.35 |
+| R4 (Dr. GRPO) | 7 | 39.3% | 288 | 0.525 | 0.469 | 0.636 | 0.796 | 1.89 |
+| R4 (Dr. GRPO) | 8 | 46.3% | 293 | 0.620 | 0.509 | 0.693 | 0.865 | 2.30 |
+| R4 (Dr. GRPO) | 9 | 46.3% | 292 | 0.609 | 0.346 | 0.757 | 0.867 | 2.41 |
+| R0-dyn | 8 | 48.7% | 300 | 0.632 | **0.000** | **0.000** | 0.875 | 2.29 |
 
-**Seed means (EM all):**
-- R1: (42.7 + 42.7 + 45.3)/3 = **43.6%** (range 42.7–45.3)
-- R2: (41.0 + 48.7 + 38.3)/3 = **42.7%** (range 38.3–48.7)
-- R0 (2 seeds so far): **41.3%**
+**3-seed means (mean ± sd) and grounded EM.** Grounded EM = EM 1, at least one citation, and every citation gold.
+
+| Method | EM | Grounded EM | Cit. prec. | Evid. cov. |
+|---|---|---|---|---|
+| B0 | 22.3 | 13.0 | 0.633 | 0.472 |
+| R0 | 42.6 ± 2.2 | 8.2 ± 14.2 (s7 24.7, s8 0.0, s9 0.0) | 0.207 ± 0.358 | 0.146 ± 0.253 |
+| **R1 VEGR** | 43.6 ± 1.5 | **32.7 ± 4.8** | **0.744 ± 0.015** | 0.440 ± 0.095 |
+| R2 | 42.7 ± 5.4 | 29.8 ± 3.1 | 0.718 ± 0.026 | 0.483 ± 0.051 |
+| R3 | 42.3 ± 2.0 | 24.7 ± 5.4 | 0.690 ± 0.053 | **0.569 ± 0.033** |
+| R4 | 44.0 ± 4.0 | 31.0 ± 7.7 | 0.695 ± 0.060 | 0.441 ± 0.085 |
+| R0-dyn (s8 only) | 48.7 | 0.0 | 0.000 | 0.000 |
+
+**Training steps (updates / skipped zero-variance):**
+- R0: s7 149/107, s8 128/128, s9 132/124
+- R1: 248/8, 248/8, 238/18
+- R2: 237–246 updates, 10–20 skipped
+- R3: 241–246 updates, 10–15 skipped
+- R4: 242–248 updates, 8–14 skipped
+- R0-dyn: 250 updates and 262 skipped over 512 questions, 6 short of the 256 target
+
+The full per-run table, with grounded EM, duplicate searches and no-citation counts, is in `logs/2026-10-11-fixes-batch.md`.
 
 ### 4.2 Paired bootstrap on EM (10k resamples, 95% CI)
 | Comparison | ΔEM (pts) | 95% CI |
@@ -158,7 +181,22 @@ EM (all) counts failures as 0. Other columns are means over completed episodes.
 | R2 s7 − R1 s7 | −1.7 | [−7.0, +3.7] |
 | R2 s8 − R1 s8 | +6.0 | [+1.3, +10.7] |
 
-Seed-9 CIs are PENDING; they will be computed together with the fixes batch. At that point, also recompute R1 s7 − B0 at 10k resamples so the whole table uses the same setting.
+The single-seed rows above are kept as they are. The R1 s7 − B0 row stays at 5k; it is superseded by the 3-seed table below.
+
+**3-seed paired bootstrap (the main table for Ch4).** For each question the score is averaged over seeds 7/8/9, then 10k resamples are drawn over the 300 questions. These CIs reflect question sampling only; report the seed sd alongside them.
+
+| Comparison | ΔEM | ΔGrounded EM |
+|---|---|---|
+| R0 − B0 | +20.2 [+15.8, +24.8] | −4.8 [−8.6, −1.2] |
+| R1 − B0 | +21.2 [+17.0, +25.4] | +19.7 [+15.8, +23.7] |
+| R2 − B0 | +20.3 [+16.1, +24.7] | +16.8 [+13.0, +20.7] |
+| R3 − B0 | +20.0 [+15.6, +24.6] | +11.7 [+7.9, +15.6] |
+| R4 − B0 | +21.7 [+17.3, +26.0] | +18.0 [+14.1, +22.0] |
+| **R1 − R0** | +1.0 [−1.8, +3.9] | **+24.4 [+20.9, +28.1]** |
+| R2 − R1 | −0.9 [−3.8, +2.1] | −2.9 [−5.9, +0.0] |
+| R3 − R1 | −1.2 [−4.2, +1.8] | −8.0 [−11.1, −4.8] |
+| R4 − R1 | +0.4 [−2.4, +3.3] | −1.7 [−4.4, +1.1] |
+| R0-dyn s8 − R0 s8 | +8.0 [+3.7, +12.3] | +0.0 (both 0) |
 
 **R2 s8 − R1 s8 (+6.0, CI excludes 0)** is the only reward-variant comparison whose CI excludes 0, and it **did not replicate** on seeds 7 and 9 (see 4.5 point 3). Always present it as a single-seed effect, never as evidence that R2 is better.
 
@@ -181,15 +219,15 @@ Here "evidence" mostly means invented or unretrievable citations.
 3. **R2 is not better than R1.** Seed 8 looked like a +6 win (CI excluded 0), but seeds 7 (−1.7) and 9 (38.3% vs. R1's 45.3%) reverse it, and the 3-seed means are 42.7% vs. 43.6%. This is a textbook case of single-seed results misleading (Henderson 2018; Agarwal 2021) and directly supports G4.
 4. **Seed variance is large,** up to ~10 EM points for R2. Do not claim method differences smaller than ~6 points.
 5. **Evidence coverage is the open problem.** The summed reward lets the policy settle for "precise but incomplete" citations (cf. ALCE). Coverage also varies with the seed: R1 s9 has the best EM (45.3%) but the lowest coverage (0.333, vs. 0.473 and 0.513). So coverage is not a fixed property of VEGR, and higher EM does not imply better coverage.
-6. **Expect Grounded EM to be well below EM for every run, R1 included.** It requires *every* citation to be gold, and R1's citation precision is only ~0.73–0.75. R0 s8 will be 0 by construction, since it cites nothing. Frame the result as "VEGR raises grounded EM relative to R0", not "VEGR answers are fully grounded". [TODO: fill in when the numbers land.]
+6. **Grounded EM is the headline metric.** R1's grounded EM is 32.7% vs. R0's 8.2%: **+24.4 points, CI [+20.9, +28.1]**, at the same EM (+1.0, CI includes 0). It is still well below EM (43.6%), so frame it as "VEGR raises grounded EM relative to R0", not "VEGR answers are fully grounded". R0 is even below the untrained B0 on grounded EM (−4.8).
 
-### 4.6 PENDING (queue finishes ~12:30 WIB 2026-10-12)
-- R0 seed 9: does the shortcut happen again?
-- R3 seeds 7/8/9: does coverage rise when it is weighted ×2?
-- R4 seeds 7/8/9: does Dr. GRPO change stability?
-- R0-dyn seed 8: can an optimizer fix alone (dynamic sampling) stop R0's shortcut, or is the evidence reward needed?
-- Grounded EM for all runs, 3-seed bootstrap CIs, and the final cost table.
-- Results will be in `logs/2026-10-11-fixes-batch.md` and `results/2026-10-11-fixes/`.
+### 4.6 Fixes batch results (done, 2026-10-12)
+- **R0 seed 9: the shortcut replicates.** No citations at all (precision 0.00; 135 correct answers have no citation). So 2 of 3 R0 seeds drop citations, and the third spams duplicate searches.
+- **R3 (coverage ×2): coverage up, grounding down.** Coverage rises 0.440 → 0.569, the only clear coverage gain. But precision falls (0.744 → 0.690) and grounded EM drops by −8.0 vs. R1 (CI [−11.1, −4.8]), because the agent cites more sentences and some are wrong. This is a precision–coverage trade-off: up-weighting a single aspect doesn't help overall grounding (cf. Fine-Grained RLHF, ALCE).
+- **R4 (Dr. GRPO) ≈ R1.** EM +0.4 and grounded EM −1.7, both with CIs that include 0. EM seed sd is larger (4.0 vs. 1.5). Std normalisation is not the bottleneck at this scale.
+- **R0-dyn s8: an optimizer fix alone does not stop the shortcut.** It has the highest EM of any run (48.7%; +8.0 vs. R0 s8, CI [+3.7, +12.3]; all 300 completed), but zero citations (grounded EM 0.0%). Dynamic sampling (DAPO) makes R0 a better *answerer*; only the evidence reward makes it *grounded*. This is the clearest single illustration of the thesis title. It is a single seed: present it as a case study, and note it skipped 262 zero-variance groups to reach 250 updates.
+- **Cost.** The fixes batch cost ≈ $26.5 (balance $28.52 → $2.05).
+- Raw files: `results/2026-10-11-fixes/`; log: `logs/2026-10-11-fixes-batch.md`.
 
 ---
 

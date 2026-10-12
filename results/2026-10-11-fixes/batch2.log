@@ -1,0 +1,1173 @@
++ source /workspace/env.sh
+++ export HF_HOME=/workspace/hf UV_CACHE_DIR=/workspace/uv-cache
+++ HF_HOME=/workspace/hf
+++ UV_CACHE_DIR=/workspace/uv-cache
+++ source /root/.local/bin/env
++++ case ":${PATH}:" in
++++ export PATH=/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++++ PATH=/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+++ export MODEL=/workspace/hf/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28
+++ MODEL=/workspace/hf/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28
+++ cd /workspace/needle
++ for name in r1_full_seed9 r2_gated_seed9
++ uv run --no-sync python scripts/train_grpo.py --config configs/training/r1_full_seed9.json --model-path /workspace/hf/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28 --train-source /workspace/data/hotpot_train_v1.1.json --output-dir /workspace/runs/r1_full_seed9
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.18it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.17it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.16it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.23it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.21it/s]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 1/256 reward_mean=4.217 std=0.433 skipped=None loss=-0.0011214390397071838 23.1s
+step 2/256 reward_mean=2.829 std=2.275 skipped=None loss=0.0003455542027950287 31.44s
+step 3/256 reward_mean=0.227 std=2.125 skipped=None loss=0.000745728611946106 31.57s
+step 4/256 reward_mean=0.358 std=2.353 skipped=None loss=-0.0026616454124450684 23.58s
+step 5/256 reward_mean=2.271 std=2.611 skipped=None loss=0.00027031823992729187 18.58s
+step 6/256 reward_mean=4.633 std=0.000 skipped=zero_reward_variance loss=None 16.65s
+step 7/256 reward_mean=-0.817 std=0.485 skipped=None loss=-0.0013190284371376038 19.0s
+step 8/256 reward_mean=3.265 std=1.612 skipped=None loss=0.0029848963022232056 32.78s
+step 9/256 reward_mean=1.346 std=1.464 skipped=None loss=-0.0008336231112480164 45.56s
+step 10/256 reward_mean=4.558 std=0.545 skipped=None loss=0.001324547454714775 30.41s
+step 11/256 reward_mean=-1.000 std=0.000 skipped=zero_reward_variance loss=None 17.56s
+step 12/256 reward_mean=0.833 std=2.410 skipped=None loss=-0.0036711469292640686 27.11s
+step 13/256 reward_mean=4.148 std=1.946 skipped=None loss=-0.0007310248911380768 28.59s
+step 14/256 reward_mean=4.458 std=0.014 skipped=None loss=0.001277424395084381 19.21s
+step 15/256 reward_mean=3.423 std=1.687 skipped=None loss=0.000927358865737915 28.5s
+step 16/256 reward_mean=2.192 std=2.017 skipped=None loss=0.004270276054739952 34.63s
+step 17/256 reward_mean=1.392 std=1.419 skipped=None loss=-0.00020241737365722656 43.34s
+step 18/256 reward_mean=1.012 std=0.761 skipped=None loss=-0.0013302043080329895 19.61s
+step 19/256 reward_mean=1.917 std=2.414 skipped=None loss=0.000659797340631485 23.96s
+step 20/256 reward_mean=3.496 std=2.251 skipped=None loss=0.0010483451187610626 30.53s
+step 21/256 reward_mean=-0.133 std=1.501 skipped=None loss=0.009111844003200531 22.03s
+step 22/256 reward_mean=4.348 std=0.268 skipped=None loss=-0.0032931119203567505 25.4s
+step 23/256 reward_mean=2.669 std=0.815 skipped=None loss=-0.008251041173934937 41.32s
+step 24/256 reward_mean=0.008 std=1.746 skipped=None loss=-0.0012848153710365295 20.17s
+step 25/256 reward_mean=4.463 std=0.864 skipped=None loss=-0.0021709799766540527 19.86s
+step 26/256 reward_mean=1.925 std=0.791 skipped=None loss=0.0003086396027356386 37.96s
+step 27/256 reward_mean=2.348 std=2.293 skipped=None loss=0.0016535446047782898 39.1s
+step 28/256 reward_mean=1.838 std=2.285 skipped=None loss=0.00021172687411308289 31.13s
+step 29/256 reward_mean=-0.306 std=0.401 skipped=None loss=-0.0016407519578933716 23.31s
+step 30/256 reward_mean=1.931 std=1.147 skipped=None loss=0.00020286068320274353 28.9s
+step 31/256 reward_mean=-0.162 std=0.893 skipped=None loss=-0.006209619343280792 30.96s
+step 32/256 reward_mean=1.450 std=0.492 skipped=None loss=-0.003580816090106964 20.57s
+step 33/256 reward_mean=0.592 std=1.520 skipped=None loss=0.0038559166714549065 22.4s
+step 34/256 reward_mean=2.271 std=2.696 skipped=None loss=0.0033816341310739517 32.73s
+step 35/256 reward_mean=-0.383 std=1.632 skipped=None loss=-0.000353347510099411 17.61s
+step 36/256 reward_mean=1.577 std=1.663 skipped=None loss=-0.0033136773854494095 35.33s
+step 37/256 reward_mean=3.429 std=1.690 skipped=None loss=0.0008805748075246811 32.55s
+step 38/256 reward_mean=0.500 std=1.513 skipped=None loss=-0.0026092324405908585 29.74s
+step 39/256 reward_mean=1.854 std=1.263 skipped=None loss=-0.004937097430229187 30.02s
+step 40/256 reward_mean=0.467 std=0.000 skipped=None loss=5.555798399461964e-11 18.0s
+step 41/256 reward_mean=0.601 std=1.800 skipped=None loss=0.003983186557888985 30.13s
+step 42/256 reward_mean=2.144 std=0.536 skipped=None loss=0.003651995211839676 23.94s
+step 43/256 reward_mean=3.040 std=1.663 skipped=None loss=-0.0008886437863111496 23.02s
+step 44/256 reward_mean=0.004 std=1.049 skipped=None loss=-0.0025657862424850464 36.11s
+step 45/256 reward_mean=2.804 std=1.438 skipped=None loss=-0.0013387277722358704 41.31s
+step 46/256 reward_mean=-1.000 std=0.000 skipped=zero_reward_variance loss=None 21.6s
+step 47/256 reward_mean=2.271 std=0.898 skipped=None loss=0.003062903881072998 22.72s
+step 48/256 reward_mean=2.673 std=2.297 skipped=None loss=-0.00027681654319167137 37.12s
+step 49/256 reward_mean=2.215 std=0.423 skipped=None loss=-0.000662490725517273 29.56s
+step 50/256 reward_mean=-1.000 std=0.000 skipped=zero_reward_variance loss=None 21.78s
+step 51/256 reward_mean=3.073 std=2.352 skipped=None loss=7.646530866622925e-05 28.21s
+step 52/256 reward_mean=2.167 std=1.568 skipped=None loss=0.001158047467470169 34.66s
+step 53/256 reward_mean=3.423 std=2.554 skipped=None loss=-2.286583185195923e-05 49.19s
+step 54/256 reward_mean=3.898 std=1.957 skipped=None loss=0.0006982423365116119 30.36s
+step 55/256 reward_mean=-0.265 std=1.946 skipped=None loss=0.0015151798725128174 37.83s
+step 56/256 reward_mean=0.404 std=0.625 skipped=None loss=-0.0006271377787925303 40.34s
+step 57/256 reward_mean=1.100 std=1.257 skipped=None loss=0.007165394723415375 20.05s
+step 58/256 reward_mean=3.108 std=1.732 skipped=None loss=0.0017826110124588013 36.6s
+step 59/256 reward_mean=1.104 std=1.256 skipped=None loss=0.0020943619310855865 49.19s
+step 60/256 reward_mean=3.167 std=2.435 skipped=None loss=0.0010527223348617554 23.67s
+step 61/256 reward_mean=4.160 std=1.128 skipped=None loss=0.0013214517384767532 24.59s
+step 62/256 reward_mean=1.538 std=2.318 skipped=None loss=0.006259603891521692 19.76s
+step 63/256 reward_mean=2.338 std=0.754 skipped=None loss=-0.0024380236864089966 33.0s
+step 64/256 reward_mean=4.758 std=0.226 skipped=None loss=-0.007911279797554016 22.95s
+step 65/256 reward_mean=3.450 std=1.231 skipped=None loss=-0.0014096684753894806 31.44s
+step 66/256 reward_mean=0.782 std=1.423 skipped=None loss=0.0017867647111415863 27.74s
+step 67/256 reward_mean=0.763 std=2.275 skipped=None loss=-0.0041227564215660095 36.26s
+step 68/256 reward_mean=3.615 std=0.979 skipped=None loss=-6.288662552833557e-05 56.86s
+step 69/256 reward_mean=2.919 std=2.616 skipped=None loss=-0.004426434636116028 33.35s
+step 70/256 reward_mean=4.917 std=0.029 skipped=None loss=-0.0026322007179260254 27.63s
+step 71/256 reward_mean=-0.200 std=0.304 skipped=None loss=0.0034054480493068695 22.16s
+step 72/256 reward_mean=4.017 std=0.260 skipped=None loss=0.0013133585453033447 27.99s
+step 73/256 reward_mean=1.529 std=2.607 skipped=None loss=-0.006660796701908112 28.6s
+step 74/256 reward_mean=3.415 std=0.651 skipped=None loss=-0.001938891364261508 36.65s
+step 75/256 reward_mean=2.479 std=0.273 skipped=None loss=-0.001019008457660675 39.37s
+step 76/256 reward_mean=0.608 std=0.419 skipped=None loss=0.0007619708776473999 46.08s
+step 77/256 reward_mean=3.927 std=0.500 skipped=None loss=-0.000225767376832664 28.44s
+step 78/256 reward_mean=1.208 std=1.334 skipped=None loss=0.0032992400228977203 31.04s
+step 79/256 reward_mean=-0.581 std=1.108 skipped=None loss=-0.0021883435547351837 27.72s
+step 80/256 reward_mean=1.248 std=1.726 skipped=None loss=0.0018380079418420792 27.72s
+step 81/256 reward_mean=1.860 std=1.250 skipped=None loss=-0.004006503615528345 26.21s
+step 82/256 reward_mean=2.530 std=0.784 skipped=None loss=0.0027846544981002808 22.2s
+step 83/256 reward_mean=3.140 std=1.932 skipped=None loss=0.004300348460674286 30.43s
+step 84/256 reward_mean=1.437 std=0.412 skipped=None loss=-0.0014070767210796475 36.45s
+step 85/256 reward_mean=4.192 std=0.375 skipped=None loss=0.0016563981771469116 19.71s
+step 86/256 reward_mean=2.000 std=2.324 skipped=None loss=0.004311166703701019 27.83s
+step 87/256 reward_mean=2.573 std=0.470 skipped=None loss=0.0036881789565086365 19.86s
+step 88/256 reward_mean=4.967 std=0.000 skipped=None loss=8.905250079016547e-10 16.91s
+step 89/256 reward_mean=2.400 std=0.265 skipped=None loss=-0.0038179010152816772 21.7s
+step 90/256 reward_mean=1.665 std=0.674 skipped=None loss=0.0002772100269794464 19.67s
+step 91/256 reward_mean=3.088 std=0.750 skipped=None loss=0.001963527873158455 21.25s
+step 92/256 reward_mean=1.333 std=1.856 skipped=None loss=-0.003476068377494812 21.5s
+step 93/256 reward_mean=-0.406 std=0.767 skipped=None loss=-0.004028670489788055 23.84s
+step 94/256 reward_mean=1.654 std=0.242 skipped=None loss=-0.003936365246772766 17.66s
+step 95/256 reward_mean=1.637 std=2.229 skipped=None loss=-0.0017749741673469543 34.18s
+step 96/256 reward_mean=4.967 std=0.000 skipped=None loss=8.88268847365481e-10 16.09s
+step 97/256 reward_mean=4.819 std=0.336 skipped=None loss=2.8269365429878235e-05 25.88s
+step 98/256 reward_mean=4.342 std=1.083 skipped=None loss=0.0013112947344779968 23.11s
+step 99/256 reward_mean=3.967 std=0.433 skipped=None loss=-0.001379072666166958 15.34s
+step 100/256 reward_mean=3.929 std=1.863 skipped=None loss=-0.00559239462018013 20.77s
+step 101/256 reward_mean=1.640 std=0.485 skipped=None loss=-0.003369264304637909 19.45s
+step 102/256 reward_mean=-1.000 std=0.000 skipped=zero_reward_variance loss=None 16.35s
+step 103/256 reward_mean=-1.000 std=0.000 skipped=zero_reward_variance loss=None 13.61s
+step 104/256 reward_mean=0.108 std=2.061 skipped=None loss=0.0007058754563331604 34.18s
+step 105/256 reward_mean=1.833 std=2.200 skipped=None loss=-0.007028788328170776 17.54s
+step 106/256 reward_mean=1.317 std=0.984 skipped=None loss=-0.00039688125252723694 21.41s
+step 107/256 reward_mean=2.958 std=2.168 skipped=None loss=-0.0010082349181175232 19.27s
+step 108/256 reward_mean=1.483 std=2.769 skipped=None loss=-0.0023648645728826523 16.94s
+step 109/256 reward_mean=3.717 std=0.456 skipped=None loss=-0.004475526511669159 31.26s
+step 110/256 reward_mean=1.956 std=0.324 skipped=None loss=-0.010170972906053066 24.28s
+step 111/256 reward_mean=4.150 std=0.246 skipped=None loss=0.0035970136523246765 19.91s
+step 112/256 reward_mean=0.494 std=0.786 skipped=None loss=0.0004056920297443867 15.75s
+step 113/256 reward_mean=4.092 std=0.740 skipped=None loss=0.0008685104548931122 19.5s
+step 114/256 reward_mean=4.842 std=0.331 skipped=None loss=0.0007268227636814117 14.77s
+step 115/256 reward_mean=2.008 std=0.110 skipped=None loss=-0.00632065162062645 16.49s
+step 116/256 reward_mean=0.283 std=0.485 skipped=None loss=0.00022732093930244446 17.61s
+step 117/256 reward_mean=0.467 std=0.000 skipped=None loss=5.534214449556818e-11 19.04s
+step 118/256 reward_mean=3.800 std=0.677 skipped=None loss=-0.0024741366505622864 16.75s
+step 119/256 reward_mean=2.196 std=1.334 skipped=None loss=-0.0006874725222587585 18.67s
+step 120/256 reward_mean=0.404 std=0.165 skipped=None loss=0.0009761340916156769 16.69s
+step 121/256 reward_mean=1.654 std=1.478 skipped=None loss=-0.00021227821707725525 17.26s
+step 122/256 reward_mean=3.967 std=0.000 skipped=None loss=8.89021564698389e-10 17.29s
+step 123/256 reward_mean=2.217 std=0.661 skipped=None loss=-0.005062729120254517 18.75s
+step 124/256 reward_mean=1.692 std=2.709 skipped=None loss=-0.0015042349696159363 22.92s
+step 125/256 reward_mean=1.967 std=0.000 skipped=zero_reward_variance loss=None 9.32s
+step 126/256 reward_mean=2.467 std=1.162 skipped=None loss=0.002227003686130047 18.65s
+step 127/256 reward_mean=0.696 std=1.280 skipped=None loss=-8.211284875869751e-05 20.52s
+step 128/256 reward_mean=2.508 std=0.725 skipped=None loss=-4.0354207158088684e-05 16.19s
+step 129/256 reward_mean=4.279 std=0.242 skipped=None loss=-0.00042826682329177856 20.27s
+step 130/256 reward_mean=0.971 std=0.892 skipped=None loss=-0.010367006063461304 18.54s
+step 131/256 reward_mean=3.367 std=1.670 skipped=None loss=-0.003424704074859619 21.62s
+step 132/256 reward_mean=1.408 std=0.938 skipped=None loss=0.0024873092770576477 20.99s
+step 133/256 reward_mean=1.408 std=1.278 skipped=None loss=0.006344357971101999 20.5s
+step 134/256 reward_mean=1.904 std=0.165 skipped=None loss=0.0019917376339435577 17.51s
+step 135/256 reward_mean=3.092 std=1.536 skipped=None loss=0.0016368795186281204 20.62s
+step 136/256 reward_mean=3.967 std=0.000 skipped=None loss=8.870302478647396e-10 19.29s
+step 137/256 reward_mean=1.233 std=2.233 skipped=None loss=0.005616761744022369 23.3s
+step 138/256 reward_mean=2.717 std=0.968 skipped=None loss=0.0009412616491317749 19.77s
+step 139/256 reward_mean=0.967 std=1.323 skipped=None loss=-0.0017991065979003906 19.26s
+step 140/256 reward_mean=4.958 std=0.014 skipped=None loss=-0.0005435943603515625 19.13s
+step 141/256 reward_mean=3.029 std=0.583 skipped=None loss=0.0016492381691932678 18.55s
+step 142/256 reward_mean=3.767 std=0.693 skipped=None loss=-0.0004061460494995117 14.55s
+step 143/256 reward_mean=1.904 std=0.165 skipped=None loss=-0.005098879337310791 14.17s
+step 144/256 reward_mean=1.779 std=1.870 skipped=None loss=0.009420141577720642 17.24s
+step 145/256 reward_mean=2.467 std=0.000 skipped=zero_reward_variance loss=None 14.19s
+step 146/256 reward_mean=4.112 std=0.460 skipped=None loss=-0.007519036531448364 18.99s
+step 147/256 reward_mean=1.708 std=0.882 skipped=None loss=-0.0017526820302009583 23.15s
+step 148/256 reward_mean=3.071 std=1.152 skipped=None loss=0.002141721546649933 18.27s
+step 149/256 reward_mean=2.125 std=1.032 skipped=None loss=-0.0031156204640865326 20.44s
+step 150/256 reward_mean=2.248 std=0.839 skipped=None loss=-0.0011993348598480225 26.8s
+step 151/256 reward_mean=1.446 std=0.242 skipped=None loss=-0.0014501586556434631 15.94s
+step 152/256 reward_mean=3.175 std=0.072 skipped=None loss=-0.0013139396905899048 18.43s
+step 153/256 reward_mean=4.271 std=0.934 skipped=None loss=-0.006151696667075157 19.32s
+step 154/256 reward_mean=0.560 std=0.355 skipped=None loss=-0.005244161933660507 18.72s
+step 155/256 reward_mean=3.133 std=0.500 skipped=None loss=0.0011607706546783447 21.76s
+step 156/256 reward_mean=2.946 std=0.335 skipped=None loss=-0.00011058896780014038 18.63s
+step 157/256 reward_mean=2.804 std=1.456 skipped=None loss=0.004850737750530243 17.57s
+step 158/256 reward_mean=4.467 std=0.000 skipped=None loss=8.889992908489575e-10 13.5s
+step 159/256 reward_mean=2.856 std=0.563 skipped=None loss=-0.0023478539660573006 20.02s
+step 160/256 reward_mean=1.779 std=0.788 skipped=None loss=0.011141756549477577 20.22s
+step 161/256 reward_mean=3.967 std=0.000 skipped=None loss=8.868025619390707e-10 18.97s
+step 162/256 reward_mean=2.133 std=0.928 skipped=None loss=0.0001048743724822998 18.3s
+step 163/256 reward_mean=2.525 std=1.280 skipped=None loss=-0.006223753094673157 24.59s
+step 164/256 reward_mean=1.029 std=0.726 skipped=None loss=0.008698798716068268 15.9s
+step 165/256 reward_mean=2.379 std=1.638 skipped=None loss=0.002125930041074753 18.3s
+step 166/256 reward_mean=3.842 std=1.213 skipped=None loss=0.003420349210500717 23.09s
+step 167/256 reward_mean=2.894 std=1.039 skipped=None loss=-0.012033583596348763 18.32s
+step 168/256 reward_mean=3.467 std=0.000 skipped=None loss=8.87394303872302e-10 20.08s
+step 169/256 reward_mean=4.042 std=0.619 skipped=None loss=0.003543112426996231 23.66s
+step 170/256 reward_mean=2.467 std=0.866 skipped=None loss=-0.000573769211769104 14.73s
+step 171/256 reward_mean=0.467 std=0.000 skipped=None loss=5.553225934651351e-11 16.24s
+step 172/256 reward_mean=3.358 std=0.154 skipped=None loss=0.001782197505235672 20.7s
+step 173/256 reward_mean=0.025 std=0.167 skipped=None loss=0.0017477534711360931 16.65s
+step 174/256 reward_mean=1.967 std=0.000 skipped=zero_reward_variance loss=None 18.03s
+step 175/256 reward_mean=1.298 std=1.190 skipped=None loss=0.003592289984226227 21.24s
+step 176/256 reward_mean=2.279 std=0.348 skipped=None loss=0.0012019053101539612 20.19s
+step 177/256 reward_mean=4.221 std=1.973 skipped=None loss=-0.0020285993814468384 17.55s
+step 178/256 reward_mean=1.500 std=0.762 skipped=None loss=0.0005800230428576469 27.99s
+step 179/256 reward_mean=4.383 std=0.710 skipped=None loss=-0.002345271408557892 21.02s
+step 180/256 reward_mean=3.367 std=0.000 skipped=zero_reward_variance loss=None 13.03s
+step 181/256 reward_mean=2.725 std=2.151 skipped=None loss=0.0020769089460372925 17.21s
+step 182/256 reward_mean=1.435 std=1.952 skipped=None loss=-0.0025946274399757385 26.93s
+step 183/256 reward_mean=3.123 std=0.413 skipped=None loss=-0.0023816414177417755 16.04s
+step 184/256 reward_mean=1.967 std=0.000 skipped=zero_reward_variance loss=None 9.67s
+step 185/256 reward_mean=4.967 std=0.000 skipped=None loss=8.879172813669456e-10 14.31s
+step 186/256 reward_mean=-0.033 std=0.000 skipped=zero_reward_variance loss=None 12.17s
+step 187/256 reward_mean=2.500 std=0.555 skipped=None loss=-0.001851869747042656 17.89s
+step 188/256 reward_mean=4.463 std=0.011 skipped=None loss=0.004405811429023743 21.08s
+step 189/256 reward_mean=0.692 std=1.047 skipped=None loss=0.00174737349152565 26.72s
+step 190/256 reward_mean=4.092 std=0.217 skipped=None loss=-0.002380453050136566 19.46s
+step 191/256 reward_mean=4.467 std=0.000 skipped=None loss=8.868264456118879e-10 15.9s
+step 192/256 reward_mean=1.967 std=0.000 skipped=zero_reward_variance loss=None 10.26s
+step 193/256 reward_mean=3.075 std=0.703 skipped=None loss=0.004716932773590088 24.81s
+step 194/256 reward_mean=4.458 std=0.014 skipped=None loss=-0.002401597797870636 18.25s
+step 195/256 reward_mean=-0.033 std=0.000 skipped=zero_reward_variance loss=None 11.68s
+step 196/256 reward_mean=2.571 std=0.424 skipped=None loss=0.00013428926467895508 19.81s
+step 197/256 reward_mean=1.404 std=0.390 skipped=None loss=0.003126254305243492 19.72s
+step 198/256 reward_mean=4.467 std=0.000 skipped=None loss=8.873893980743119e-10 13.26s
+step 199/256 reward_mean=2.175 std=0.370 skipped=None loss=0.0008762925863265991 27.51s
+step 200/256 reward_mean=3.479 std=1.462 skipped=None loss=-0.0015792753547430038 25.0s
+step 201/256 reward_mean=1.835 std=1.424 skipped=None loss=-0.003767091780900955 29.78s
+step 202/256 reward_mean=3.967 std=0.000 skipped=None loss=8.877087190328758e-10 18.94s
+step 203/256 reward_mean=3.025 std=1.068 skipped=None loss=-0.001286730170249939 18.91s
+step 204/256 reward_mean=3.967 std=0.000 skipped=None loss=8.874884924181536e-10 20.12s
+step 205/256 reward_mean=4.308 std=0.655 skipped=None loss=3.9249658584594727e-05 35.06s
+step 206/256 reward_mean=2.904 std=1.210 skipped=None loss=0.003470487892627716 14.52s
+step 207/256 reward_mean=3.967 std=0.000 skipped=None loss=8.882346524963225e-10 20.0s
+step 208/256 reward_mean=-0.033 std=0.000 skipped=zero_reward_variance loss=None 12.11s
+step 209/256 reward_mean=3.717 std=0.661 skipped=None loss=-0.011288899928331375 15.93s
+step 210/256 reward_mean=3.904 std=0.165 skipped=None loss=0.0016385242342948914 16.23s
+step 211/256 reward_mean=3.408 std=1.674 skipped=None loss=-0.0031404495239257812 16.03s
+step 212/256 reward_mean=1.212 std=0.746 skipped=None loss=-0.0018895119428634644 18.24s
+step 213/256 reward_mean=3.967 std=0.000 skipped=None loss=8.880858756721288e-10 21.3s
+step 214/256 reward_mean=4.467 std=0.000 skipped=None loss=8.915524082886428e-10 17.16s
+step 215/256 reward_mean=1.342 std=0.331 skipped=None loss=0.005050569772720337 17.23s
+step 216/256 reward_mean=2.465 std=0.594 skipped=None loss=-0.0011178768472746015 16.66s
+step 217/256 reward_mean=4.967 std=0.000 skipped=None loss=8.868138723361341e-10 16.91s
+step 218/256 reward_mean=4.467 std=0.000 skipped=None loss=8.874868895336618e-10 17.94s
+step 219/256 reward_mean=4.217 std=0.250 skipped=None loss=-0.004626452922821045 19.92s
+step 220/256 reward_mean=0.967 std=0.000 skipped=zero_reward_variance loss=None 13.7s
+step 221/256 reward_mean=3.267 std=0.000 skipped=None loss=-4.4376857050165697e-10 16.16s
+step 222/256 reward_mean=4.633 std=0.000 skipped=zero_reward_variance loss=None 14.64s
+step 223/256 reward_mean=4.050 std=0.661 skipped=None loss=0.0017830543220043182 20.11s
+step 224/256 reward_mean=3.196 std=1.732 skipped=None loss=0.0015153996646404266 20.71s
+step 225/256 reward_mean=2.112 std=1.345 skipped=None loss=-0.0007333476096391678 25.17s
+step 226/256 reward_mean=4.092 std=0.161 skipped=None loss=-0.00022046267986297607 20.59s
+step 227/256 reward_mean=3.458 std=0.905 skipped=None loss=-0.006770685315132141 20.98s
+step 228/256 reward_mean=2.338 std=0.214 skipped=None loss=-0.0019255690276622772 17.19s
+step 229/256 reward_mean=2.102 std=0.325 skipped=None loss=0.002483520656824112 21.85s
+step 230/256 reward_mean=1.438 std=1.834 skipped=None loss=-0.0007040947675704956 27.86s
+step 231/256 reward_mean=1.758 std=0.501 skipped=None loss=0.000559728592634201 24.02s
+step 232/256 reward_mean=2.504 std=1.272 skipped=None loss=-7.151812314987183e-05 25.11s
+step 233/256 reward_mean=0.892 std=1.237 skipped=None loss=0.005048498511314392 20.99s
+step 234/256 reward_mean=2.240 std=1.148 skipped=None loss=-0.0016791075468063354 33.82s
+step 235/256 reward_mean=3.121 std=0.926 skipped=None loss=0.002964520826935768 31.37s
+step 236/256 reward_mean=2.400 std=0.384 skipped=None loss=0.0007944069802761078 23.59s
+step 237/256 reward_mean=0.762 std=0.872 skipped=None loss=-0.00520801916718483 17.34s
+step 238/256 reward_mean=-0.533 std=0.467 skipped=None loss=0.0056314244866371155 40.54s
+step 239/256 reward_mean=2.471 std=2.706 skipped=None loss=0.0009483546018600464 17.13s
+step 240/256 reward_mean=1.596 std=0.981 skipped=None loss=-0.0085548534989357 18.22s
+step 241/256 reward_mean=4.213 std=0.351 skipped=None loss=0.00010418891906738281 16.81s
+step 242/256 reward_mean=4.292 std=0.014 skipped=None loss=-0.0007625818252563477 23.83s
+step 243/256 reward_mean=3.633 std=0.577 skipped=None loss=0.0025968849658966064 17.23s
+step 244/256 reward_mean=-0.579 std=0.560 skipped=None loss=-2.6591122150421143e-05 17.83s
+step 245/256 reward_mean=3.871 std=0.827 skipped=None loss=0.0014120042324066162 30.24s
+step 246/256 reward_mean=4.467 std=0.000 skipped=None loss=8.884159588551377e-10 20.22s
+step 247/256 reward_mean=4.433 std=0.000 skipped=zero_reward_variance loss=None 14.44s
+step 248/256 reward_mean=0.302 std=0.395 skipped=None loss=0.00022657960653305054 24.74s
+step 249/256 reward_mean=4.369 std=0.166 skipped=None loss=0.004238711670041084 27.3s
+step 250/256 reward_mean=1.621 std=0.242 skipped=None loss=-0.006024442613124847 27.57s
+step 251/256 reward_mean=2.383 std=0.698 skipped=None loss=0.00043890997767448425 31.13s
+step 252/256 reward_mean=0.531 std=0.278 skipped=None loss=-0.002939138561487198 25.3s
+step 253/256 reward_mean=2.956 std=1.122 skipped=None loss=0.002049624570645392 20.89s
+step 254/256 reward_mean=4.254 std=0.022 skipped=None loss=0.0004118233919143677 26.07s
+step 255/256 reward_mean=4.192 std=0.500 skipped=None loss=0.0017750971019268036 27.75s
+step 256/256 reward_mean=3.125 std=0.896 skipped=None loss=-0.004011169075965881 25.53s
+Saved final adapter to /workspace/runs/r1_full_seed9/checkpoint-final/adapter
++ uv run --no-sync python scripts/evaluate_checkpoint.py --model-path /workspace/hf/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28 --adapter-path /workspace/runs/r1_full_seed9/checkpoint-final/adapter --source /workspace/data/hotpot_dev_distractor_v1.json --output-dir /workspace/results/r1_full_seed9 --name r1_full_seed9
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.16it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.21it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.22it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.29it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.26it/s]
+1/300 completed
+2/300 completed
+3/300 completed
+4/300 completed
+5/300 completed
+6/300 completed
+7/300 completed
+8/300 completed
+9/300 completed
+10/300 completed
+11/300 completed
+12/300 completed
+13/300 completed
+14/300 completed
+15/300 completed
+16/300 completed
+17/300 completed
+18/300 completed
+19/300 completed
+20/300 completed
+21/300 completed
+22/300 completed
+23/300 completed
+24/300 completed
+25/300 completed
+26/300 completed
+27/300 completed
+28/300 completed
+29/300 completed
+30/300 failed
+31/300 completed
+32/300 completed
+33/300 completed
+34/300 completed
+35/300 completed
+36/300 completed
+37/300 completed
+38/300 completed
+39/300 completed
+40/300 completed
+41/300 completed
+42/300 completed
+43/300 failed
+44/300 completed
+45/300 completed
+46/300 completed
+47/300 completed
+48/300 completed
+49/300 completed
+50/300 completed
+51/300 completed
+52/300 completed
+53/300 completed
+54/300 completed
+55/300 completed
+56/300 completed
+57/300 completed
+58/300 completed
+59/300 completed
+60/300 completed
+61/300 completed
+62/300 completed
+63/300 failed
+64/300 completed
+65/300 completed
+66/300 completed
+67/300 completed
+68/300 completed
+69/300 completed
+70/300 completed
+71/300 completed
+72/300 completed
+73/300 completed
+74/300 completed
+75/300 completed
+76/300 completed
+77/300 completed
+78/300 completed
+79/300 completed
+80/300 failed
+81/300 completed
+82/300 completed
+83/300 completed
+84/300 completed
+85/300 completed
+86/300 completed
+87/300 completed
+88/300 completed
+89/300 completed
+90/300 completed
+91/300 completed
+92/300 completed
+93/300 completed
+94/300 completed
+95/300 completed
+96/300 completed
+97/300 completed
+98/300 completed
+99/300 completed
+100/300 completed
+101/300 completed
+102/300 completed
+103/300 completed
+104/300 completed
+105/300 completed
+106/300 completed
+107/300 completed
+108/300 completed
+109/300 completed
+110/300 completed
+111/300 completed
+112/300 completed
+113/300 completed
+114/300 completed
+115/300 completed
+116/300 completed
+117/300 completed
+118/300 completed
+119/300 completed
+120/300 failed
+121/300 completed
+122/300 completed
+123/300 completed
+124/300 completed
+125/300 completed
+126/300 completed
+127/300 completed
+128/300 completed
+129/300 completed
+130/300 completed
+131/300 completed
+132/300 completed
+133/300 completed
+134/300 completed
+135/300 completed
+136/300 completed
+137/300 completed
+138/300 completed
+139/300 completed
+140/300 completed
+141/300 completed
+142/300 completed
+143/300 completed
+144/300 completed
+145/300 completed
+146/300 completed
+147/300 completed
+148/300 completed
+149/300 completed
+150/300 completed
+151/300 completed
+152/300 completed
+153/300 completed
+154/300 completed
+155/300 completed
+156/300 completed
+157/300 completed
+158/300 completed
+159/300 completed
+160/300 completed
+161/300 completed
+162/300 failed
+163/300 failed
+164/300 completed
+165/300 completed
+166/300 completed
+167/300 completed
+168/300 completed
+169/300 completed
+170/300 completed
+171/300 completed
+172/300 completed
+173/300 completed
+174/300 completed
+175/300 completed
+176/300 completed
+177/300 completed
+178/300 completed
+179/300 completed
+180/300 completed
+181/300 completed
+182/300 completed
+183/300 completed
+184/300 completed
+185/300 completed
+186/300 completed
+187/300 completed
+188/300 completed
+189/300 completed
+190/300 completed
+191/300 completed
+192/300 completed
+193/300 completed
+194/300 completed
+195/300 completed
+196/300 completed
+197/300 completed
+198/300 completed
+199/300 completed
+200/300 completed
+201/300 completed
+202/300 completed
+203/300 completed
+204/300 completed
+205/300 completed
+206/300 completed
+207/300 completed
+208/300 completed
+209/300 completed
+210/300 completed
+211/300 completed
+212/300 completed
+213/300 completed
+214/300 completed
+215/300 completed
+216/300 completed
+217/300 completed
+218/300 completed
+219/300 completed
+220/300 completed
+221/300 completed
+222/300 completed
+223/300 completed
+224/300 completed
+225/300 completed
+226/300 completed
+227/300 completed
+228/300 completed
+229/300 completed
+230/300 completed
+231/300 completed
+232/300 completed
+233/300 completed
+234/300 completed
+235/300 completed
+236/300 completed
+237/300 completed
+238/300 completed
+239/300 completed
+240/300 completed
+241/300 completed
+242/300 completed
+243/300 completed
+244/300 completed
+245/300 completed
+246/300 completed
+247/300 completed
+248/300 completed
+249/300 completed
+250/300 completed
+251/300 completed
+252/300 completed
+253/300 completed
+254/300 completed
+255/300 completed
+256/300 completed
+257/300 completed
+258/300 completed
+259/300 completed
+260/300 completed
+261/300 completed
+262/300 completed
+263/300 completed
+264/300 completed
+265/300 completed
+266/300 completed
+267/300 completed
+268/300 completed
+269/300 completed
+270/300 completed
+271/300 completed
+272/300 completed
+273/300 completed
+274/300 completed
+275/300 completed
+276/300 completed
+277/300 completed
+278/300 completed
+279/300 completed
+280/300 completed
+281/300 completed
+282/300 completed
+283/300 completed
+284/300 completed
+285/300 completed
+286/300 completed
+287/300 completed
+288/300 completed
+289/300 completed
+290/300 completed
+291/300 completed
+292/300 completed
+293/300 completed
+294/300 completed
+295/300 completed
+296/300 completed
+297/300 completed
+298/300 completed
+299/300 completed
+300/300 completed
+{
+  "r1_full_seed9": {
+    "n": 300,
+    "completed": 293,
+    "failed": 7,
+    "answer_exact_match_all_rows_fail_as_zero": 0.4533,
+    "answer_exact_match_completed_only": 0.4642,
+    "answer_f1_completed_only": 0.5978,
+    "evidence_coverage_completed_only": 0.3328,
+    "citation_precision_completed_only": 0.7543,
+    "retrieval_recall_completed_only": 0.8373,
+    "total_completed_only": 2.9182,
+    "mean_searches_completed_only": 1.9113
+  }
+}
++ echo 'RUN_DONE r1_full_seed9 exit=0'
+RUN_DONE r1_full_seed9 exit=0
++ for name in r1_full_seed9 r2_gated_seed9
++ uv run --no-sync python scripts/train_grpo.py --config configs/training/r2_gated_seed9.json --model-path /workspace/hf/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28 --train-source /workspace/data/hotpot_train_v1.1.json --output-dir /workspace/runs/r2_gated_seed9
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.17it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.17it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.16it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.22it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.20it/s]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 1/256 reward_mean=4.217 std=0.433 skipped=None loss=-0.0011214390397071838 23.66s
+step 2/256 reward_mean=1.658 std=2.696 skipped=None loss=3.316998481750488e-05 30.48s
+step 3/256 reward_mean=0.227 std=2.125 skipped=None loss=0.0007767751812934875 29.18s
+step 4/256 reward_mean=0.358 std=2.353 skipped=None loss=-0.0007523596286773682 23.62s
+step 5/256 reward_mean=1.112 std=2.727 skipped=None loss=0.006694510579109192 19.5s
+step 6/256 reward_mean=4.633 std=0.000 skipped=zero_reward_variance loss=None 16.84s
+step 7/256 reward_mean=-0.812 std=0.496 skipped=None loss=-0.005363773554563522 22.57s
+step 8/256 reward_mean=3.258 std=1.610 skipped=None loss=0.0020784996449947357 35.54s
+step 9/256 reward_mean=1.488 std=1.564 skipped=None loss=-0.000733058899641037 51.51s
+step 10/256 reward_mean=4.683 std=0.500 skipped=None loss=-0.0009254701435565948 31.01s
+step 11/256 reward_mean=-0.404 std=1.576 skipped=None loss=-0.000846371054649353 25.91s
+step 12/256 reward_mean=1.198 std=2.198 skipped=None loss=-0.0021410882472991943 27.54s
+step 13/256 reward_mean=4.148 std=1.946 skipped=None loss=0.0006274953484535217 29.53s
+step 14/256 reward_mean=4.458 std=0.014 skipped=None loss=-0.0023534297943115234 19.51s
+step 15/256 reward_mean=4.102 std=0.257 skipped=None loss=-0.0002514198422431946 30.43s
+step 16/256 reward_mean=1.958 std=1.907 skipped=None loss=-0.0035771101247519255 36.37s
+step 17/256 reward_mean=1.104 std=1.700 skipped=None loss=-0.002452213317155838 54.98s
+step 18/256 reward_mean=1.777 std=1.174 skipped=None loss=0.0013877488672733307 21.77s
+step 19/256 reward_mean=2.671 std=2.315 skipped=None loss=-0.001957319676876068 26.57s
+step 20/256 reward_mean=2.200 std=2.391 skipped=None loss=-0.005419607274234295 39.37s
+step 21/256 reward_mean=-0.281 std=1.284 skipped=None loss=-0.0010110586881637573 33.14s
+step 22/256 reward_mean=4.467 std=0.182 skipped=None loss=-0.0001359879970550537 38.03s
+step 23/256 reward_mean=3.400 std=1.214 skipped=None loss=-0.000506129115819931 56.31s
+step 24/256 reward_mean=-1.000 std=0.000 skipped=zero_reward_variance loss=None 17.68s
+step 25/256 reward_mean=4.190 std=1.962 skipped=None loss=-0.0005922131240367889 23.13s
+step 26/256 reward_mean=2.250 std=0.354 skipped=None loss=-0.0017945542931556702 37.65s
+step 27/256 reward_mean=3.304 std=1.697 skipped=None loss=0.0029937531799077988 42.53s
+step 28/256 reward_mean=1.850 std=2.267 skipped=None loss=-0.004745692014694214 26.34s
+step 29/256 reward_mean=-0.312 std=0.556 skipped=None loss=-0.0004028528928756714 27.12s
+step 30/256 reward_mean=1.875 std=1.111 skipped=None loss=0.0007293103262782097 31.53s
+step 31/256 reward_mean=0.188 std=0.998 skipped=None loss=-0.0011851787567138672 40.28s
+step 32/256 reward_mean=1.500 std=1.090 skipped=None loss=0.00291549414396286 23.19s
+step 33/256 reward_mean=1.679 std=1.501 skipped=None loss=6.512738764286041e-05 23.82s
+step 34/256 reward_mean=1.771 std=2.351 skipped=None loss=-0.002817087806761265 38.55s
+step 35/256 reward_mean=1.927 std=2.281 skipped=None loss=-0.0029529035091400146 23.07s
+step 36/256 reward_mean=0.853 std=1.696 skipped=None loss=-7.406622171401978e-05 53.2s
+step 37/256 reward_mean=1.971 std=1.609 skipped=None loss=-0.00146432314068079 42.12s
+step 38/256 reward_mean=0.150 std=1.584 skipped=None loss=0.0009725242853164673 40.24s
+step 39/256 reward_mean=1.762 std=1.402 skipped=None loss=0.004639036953449249 31.13s
+step 40/256 reward_mean=0.875 std=0.217 skipped=None loss=0.004902981221675873 26.07s
+step 41/256 reward_mean=1.259 std=1.273 skipped=None loss=-0.0037749838083982468 46.88s
+step 42/256 reward_mean=2.125 std=0.484 skipped=None loss=0.0010266676545143127 25.17s
+step 43/256 reward_mean=2.592 std=1.835 skipped=None loss=-0.0009122099727392197 28.25s
+step 44/256 reward_mean=0.550 std=1.947 skipped=None loss=0.0010080188512802124 36.23s
+step 45/256 reward_mean=1.171 std=2.171 skipped=None loss=-0.005015410482883453 46.13s
+step 46/256 reward_mean=0.963 std=2.534 skipped=None loss=0.0009713172912597656 42.56s
+step 47/256 reward_mean=1.867 std=1.255 skipped=None loss=0.00233639869838953 24.36s
+step 48/256 reward_mean=2.725 std=2.303 skipped=None loss=-0.0012069777585566044 35.68s
+step 49/256 reward_mean=2.767 std=1.668 skipped=None loss=0.001140780746936798 38.16s
+step 50/256 reward_mean=-1.000 std=0.000 skipped=zero_reward_variance loss=None 27.01s
+step 51/256 reward_mean=4.429 std=0.011 skipped=None loss=-0.0016001388430595398 35.94s
+step 52/256 reward_mean=0.206 std=1.337 skipped=None loss=-0.0020892955362796783 37.68s
+step 53/256 reward_mean=3.035 std=2.417 skipped=None loss=-0.002435593632981181 59.11s
+step 54/256 reward_mean=1.663 std=2.220 skipped=None loss=-0.0002894401550292969 49.57s
+step 55/256 reward_mean=0.154 std=2.105 skipped=None loss=0.0020562708377838135 41.48s
+step 56/256 reward_mean=4.346 std=0.156 skipped=None loss=-0.0018333196640014648 43.51s
+step 57/256 reward_mean=1.062 std=0.634 skipped=None loss=0.0008035749197006226 26.8s
+step 58/256 reward_mean=4.162 std=0.185 skipped=None loss=0.00038316845893859863 35.4s
+step 59/256 reward_mean=0.425 std=1.738 skipped=None loss=0.002041187137365341 48.8s
+step 60/256 reward_mean=3.871 std=0.768 skipped=None loss=-0.0013908091932535172 37.55s
+step 61/256 reward_mean=3.771 std=0.658 skipped=None loss=-0.0013934746384620667 35.29s
+step 62/256 reward_mean=1.413 std=2.768 skipped=None loss=0.0002996399998664856 29.53s
+step 63/256 reward_mean=1.656 std=1.096 skipped=None loss=0.0006787506863474846 37.22s
+step 64/256 reward_mean=4.442 std=0.014 skipped=None loss=0.008586682379245758 28.4s
+step 65/256 reward_mean=4.446 std=0.766 skipped=None loss=0.001824747771024704 31.56s
+step 66/256 reward_mean=1.283 std=1.729 skipped=None loss=0.0005983671871945262 29.47s
+step 67/256 reward_mean=3.154 std=1.713 skipped=None loss=-0.0016622748225927353 50.59s
+step 68/256 reward_mean=3.317 std=0.844 skipped=None loss=0.0016947388648986816 45.93s
+step 69/256 reward_mean=2.296 std=1.542 skipped=None loss=-0.006321515887975693 39.85s
+step 70/256 reward_mean=3.871 std=1.245 skipped=None loss=-0.0004275711253285408 30.85s
+step 71/256 reward_mean=0.000 std=0.000 skipped=zero_reward_variance loss=None 14.36s
+step 72/256 reward_mean=2.871 std=2.239 skipped=None loss=0.003725450485944748 27.77s
+step 73/256 reward_mean=3.460 std=1.906 skipped=None loss=0.0014129430055618286 32.27s
+step 74/256 reward_mean=1.702 std=1.596 skipped=None loss=0.003970034420490265 34.2s
+step 75/256 reward_mean=1.504 std=1.446 skipped=None loss=0.0025731921195983887 50.14s
+step 76/256 reward_mean=0.923 std=1.119 skipped=None loss=0.00264010950922966 35.33s
+step 77/256 reward_mean=4.250 std=0.486 skipped=None loss=0.0005846172571182251 29.15s
+step 78/256 reward_mean=1.406 std=1.494 skipped=None loss=-0.0003503262996673584 33.79s
+step 79/256 reward_mean=2.427 std=1.295 skipped=None loss=-0.0002742782235145569 30.29s
+step 80/256 reward_mean=1.921 std=1.064 skipped=None loss=-0.0021054306998848915 34.97s
+step 81/256 reward_mean=1.448 std=1.652 skipped=None loss=-0.0038295798003673553 29.3s
+step 82/256 reward_mean=2.125 std=0.656 skipped=None loss=0.001237543299794197 27.35s
+step 83/256 reward_mean=2.108 std=1.139 skipped=None loss=0.0003284681588411331 27.98s
+step 84/256 reward_mean=1.812 std=1.171 skipped=None loss=0.002094333991408348 50.32s
+step 85/256 reward_mean=4.504 std=0.163 skipped=None loss=-0.004179671406745911 24.46s
+step 86/256 reward_mean=2.004 std=1.524 skipped=None loss=-0.001716114580631256 42.05s
+step 87/256 reward_mean=2.438 std=1.310 skipped=None loss=-0.000727369450032711 28.79s
+step 88/256 reward_mean=4.185 std=0.637 skipped=None loss=-0.0048021115362644196 26.54s
+step 89/256 reward_mean=3.648 std=0.408 skipped=None loss=9.460840374231339e-05 41.26s
+step 90/256 reward_mean=1.735 std=0.404 skipped=None loss=-0.0005367659032344818 23.75s
+step 91/256 reward_mean=2.575 std=2.070 skipped=None loss=0.00033126771450042725 29.11s
+step 92/256 reward_mean=2.908 std=1.539 skipped=None loss=0.00010878965258598328 19.17s
+step 93/256 reward_mean=0.250 std=0.722 skipped=None loss=-0.00189238041639328 44.34s
+step 94/256 reward_mean=3.300 std=0.927 skipped=None loss=-0.0003748089075088501 39.67s
+step 95/256 reward_mean=2.508 std=0.602 skipped=None loss=0.0015580728650093079 52.9s
+step 96/256 reward_mean=3.440 std=0.840 skipped=None loss=-0.007260671118274331 32.93s
+step 97/256 reward_mean=3.838 std=1.874 skipped=None loss=0.0010440705809742212 51.4s
+step 98/256 reward_mean=2.608 std=1.170 skipped=None loss=0.0008736476302146912 46.65s
+step 99/256 reward_mean=3.590 std=0.626 skipped=None loss=-0.0019185170531272888 30.79s
+step 100/256 reward_mean=3.912 std=1.857 skipped=None loss=-0.0006828047335147858 26.96s
+step 101/256 reward_mean=1.667 std=1.118 skipped=None loss=0.005965020507574081 44.7s
+step 102/256 reward_mean=2.779 std=1.561 skipped=None loss=-0.00032446347177028656 45.27s
+step 103/256 reward_mean=3.212 std=0.756 skipped=None loss=0.0018628500401973724 34.87s
+step 104/256 reward_mean=3.892 std=0.694 skipped=None loss=-0.0035325810313224792 47.19s
+step 105/256 reward_mean=2.625 std=1.002 skipped=None loss=-0.0035358071327209473 39.63s
+step 106/256 reward_mean=1.771 std=1.963 skipped=None loss=0.0019142553210258484 44.14s
+step 107/256 reward_mean=2.946 std=1.946 skipped=None loss=0.0005051661282777786 39.49s
+step 108/256 reward_mean=3.058 std=1.180 skipped=None loss=0.0035969167947769165 46.39s
+step 109/256 reward_mean=3.946 std=0.351 skipped=None loss=0.0003394116647541523 39.95s
+step 110/256 reward_mean=2.788 std=1.594 skipped=None loss=0.000216752290725708 39.1s
+step 111/256 reward_mean=3.721 std=1.784 skipped=None loss=-0.003827296197414398 45.47s
+step 112/256 reward_mean=0.354 std=1.300 skipped=None loss=0.0016635600477457047 47.31s
+step 113/256 reward_mean=4.767 std=0.213 skipped=None loss=-0.001757293939590454 56.89s
+step 114/256 reward_mean=4.829 std=0.179 skipped=None loss=-0.004602812463417649 27.98s
+step 115/256 reward_mean=1.079 std=2.142 skipped=None loss=-0.0012912452220916748 44.32s
+step 116/256 reward_mean=0.500 std=0.000 skipped=zero_reward_variance loss=None 34.68s
+step 117/256 reward_mean=0.312 std=0.496 skipped=None loss=-0.0012039057910442352 48.04s
+step 118/256 reward_mean=3.208 std=0.331 skipped=None loss=-0.0001065409742295742 34.7s
+step 119/256 reward_mean=2.135 std=0.538 skipped=None loss=0.0007045343518257141 48.75s
+step 120/256 reward_mean=0.863 std=1.443 skipped=None loss=-0.00010342616587877274 44.92s
+step 121/256 reward_mean=2.708 std=1.609 skipped=None loss=-0.0006962437182664871 47.28s
+step 122/256 reward_mean=4.450 std=0.470 skipped=None loss=0.0006808806210756302 45.35s
+step 123/256 reward_mean=1.221 std=1.348 skipped=None loss=0.0010409876704216003 67.12s
+step 124/256 reward_mean=2.875 std=2.269 skipped=None loss=-0.0019116811454296112 48.84s
+step 125/256 reward_mean=4.888 std=0.022 skipped=None loss=0.004791323095560074 36.52s
+step 126/256 reward_mean=2.831 std=0.629 skipped=None loss=0.0011556530371308327 37.55s
+step 127/256 reward_mean=0.715 std=0.828 skipped=None loss=-0.0034904368221759796 50.16s
+step 128/256 reward_mean=4.300 std=0.115 skipped=None loss=0.001577477902173996 38.42s
+step 129/256 reward_mean=4.379 std=0.243 skipped=None loss=0.00010816659778356552 48.36s
+step 130/256 reward_mean=1.000 std=0.917 skipped=None loss=-0.005870044231414795 43.51s
+step 131/256 reward_mean=2.690 std=2.858 skipped=None loss=0.0011847615242004395 35.36s
+step 132/256 reward_mean=0.725 std=0.672 skipped=None loss=-0.0004717782139778137 38.31s
+step 133/256 reward_mean=2.485 std=0.677 skipped=None loss=-0.00031034648418426514 42.96s
+step 134/256 reward_mean=3.038 std=1.347 skipped=None loss=-0.004818551242351532 27.98s
+step 135/256 reward_mean=4.183 std=0.917 skipped=None loss=-0.0036935657262802124 36.09s
+step 136/256 reward_mean=2.750 std=2.172 skipped=None loss=-0.00044459104537963867 33.38s
+step 137/256 reward_mean=2.606 std=2.089 skipped=None loss=-0.002036530524492264 34.18s
+step 138/256 reward_mean=2.923 std=1.617 skipped=None loss=-0.004084371030330658 32.59s
+step 139/256 reward_mean=4.433 std=0.000 skipped=zero_reward_variance loss=None 26.28s
+step 140/256 reward_mean=4.767 std=0.333 skipped=None loss=0.0012098997831344604 31.68s
+step 141/256 reward_mean=3.152 std=0.415 skipped=None loss=0.0016269087791442871 31.36s
+step 142/256 reward_mean=3.802 std=1.926 skipped=None loss=-0.0022357143461704254 23.08s
+step 143/256 reward_mean=1.562 std=0.165 skipped=None loss=-0.010918181389570236 31.66s
+step 144/256 reward_mean=3.890 std=0.017 skipped=None loss=-9.867548942565918e-05 27.73s
+step 145/256 reward_mean=2.896 std=0.424 skipped=None loss=0.0008615627884864807 34.93s
+step 146/256 reward_mean=3.846 std=0.158 skipped=None loss=0.0004631895571947098 33.01s
+step 147/256 reward_mean=2.050 std=0.738 skipped=None loss=-0.002579355612397194 41.83s
+step 148/256 reward_mean=3.710 std=1.780 skipped=None loss=0.00032066553831100464 26.14s
+step 149/256 reward_mean=3.194 std=1.756 skipped=None loss=0.005130108445882797 30.32s
+step 150/256 reward_mean=3.825 std=1.054 skipped=None loss=-0.00010544806718826294 38.88s
+step 151/256 reward_mean=4.067 std=0.529 skipped=None loss=0.005157336592674255 31.82s
+step 152/256 reward_mean=4.127 std=0.428 skipped=None loss=-0.0034737512469291687 30.59s
+step 153/256 reward_mean=4.702 std=0.247 skipped=None loss=0.0014107301831245422 34.03s
+step 154/256 reward_mean=0.817 std=1.249 skipped=None loss=-0.005276642739772797 33.5s
+step 155/256 reward_mean=3.125 std=1.525 skipped=None loss=0.0031879618763923645 33.67s
+step 156/256 reward_mean=2.263 std=1.269 skipped=None loss=-0.003295488189905882 36.0s
+step 157/256 reward_mean=4.308 std=0.110 skipped=None loss=-0.011300276964902878 26.92s
+step 158/256 reward_mean=4.408 std=0.025 skipped=None loss=0.0027450472116470337 22.1s
+step 159/256 reward_mean=2.881 std=0.552 skipped=None loss=-0.0009566135704517365 39.54s
+step 160/256 reward_mean=2.633 std=0.758 skipped=None loss=-0.0018162801861763 39.73s
+step 161/256 reward_mean=4.438 std=0.011 skipped=None loss=-0.00244898721575737 36.28s
+step 162/256 reward_mean=2.317 std=2.127 skipped=None loss=0.004302056506276131 27.71s
+step 163/256 reward_mean=2.804 std=0.637 skipped=None loss=0.007964547723531723 28.32s
+step 164/256 reward_mean=0.562 std=0.726 skipped=None loss=0.0012673866003751755 30.43s
+step 165/256 reward_mean=1.929 std=1.364 skipped=None loss=-0.0005029491148889065 33.75s
+step 166/256 reward_mean=2.833 std=0.000 skipped=None loss=-4.4427121356771515e-10 34.15s
+step 167/256 reward_mean=2.921 std=0.740 skipped=None loss=0.002871282398700714 31.14s
+step 168/256 reward_mean=4.427 std=0.671 skipped=None loss=0.002064056694507599 28.62s
+step 169/256 reward_mean=3.721 std=0.293 skipped=None loss=0.0008381622610613704 51.48s
+step 170/256 reward_mean=1.796 std=0.843 skipped=None loss=0.0026056189090013504 21.75s
+step 171/256 reward_mean=1.188 std=0.827 skipped=None loss=-0.000718437135219574 33.38s
+step 172/256 reward_mean=2.977 std=0.550 skipped=None loss=-0.0015214160084724426 28.29s
+step 173/256 reward_mean=0.500 std=0.433 skipped=None loss=-0.0023154020309448242 26.99s
+step 174/256 reward_mean=3.692 std=0.639 skipped=None loss=-0.004409655928611755 33.2s
+step 175/256 reward_mean=1.117 std=1.279 skipped=None loss=-0.0005780421197414398 26.23s
+step 176/256 reward_mean=0.358 std=2.366 skipped=None loss=-0.008249975740909576 24.63s
+step 177/256 reward_mean=3.562 std=1.902 skipped=None loss=0.0035743117332458496 34.06s
+step 178/256 reward_mean=0.562 std=0.726 skipped=None loss=0.004933323711156845 30.88s
+step 179/256 reward_mean=4.967 std=0.000 skipped=None loss=8.880577523351363e-10 16.73s
+step 180/256 reward_mean=3.092 std=0.524 skipped=None loss=-0.002091938629746437 27.97s
+step 181/256 reward_mean=2.379 std=1.426 skipped=None loss=-0.0013815299607813358 26.2s
+step 182/256 reward_mean=0.852 std=2.110 skipped=None loss=0.0016605481505393982 35.39s
+step 183/256 reward_mean=4.121 std=0.165 skipped=None loss=-0.00022076070308685303 26.57s
+step 184/256 reward_mean=2.850 std=1.162 skipped=None loss=0.0037366002798080444 23.1s
+step 185/256 reward_mean=4.890 std=0.017 skipped=None loss=-2.6904046535491943e-05 24.8s
+step 186/256 reward_mean=2.912 std=0.033 skipped=None loss=0.0011592395603656769 52.07s
+step 187/256 reward_mean=2.658 std=1.127 skipped=None loss=0.0008479424868710339 32.49s
+step 188/256 reward_mean=4.283 std=0.399 skipped=None loss=-0.004397403448820114 34.05s
+step 189/256 reward_mean=2.021 std=1.178 skipped=None loss=-0.0023143962025642395 36.43s
+step 190/256 reward_mean=4.121 std=0.242 skipped=None loss=0.0027070268988609314 35.43s
+step 191/256 reward_mean=3.823 std=0.240 skipped=None loss=0.0001550726592540741 31.88s
+step 192/256 reward_mean=1.456 std=0.965 skipped=None loss=0.005333462730050087 29.86s
+step 193/256 reward_mean=2.888 std=1.505 skipped=None loss=-0.0030232975259423256 30.14s
+step 194/256 reward_mean=3.629 std=1.797 skipped=None loss=0.0022870702669024467 38.75s
+step 195/256 reward_mean=0.965 std=0.990 skipped=None loss=-0.0014387145638465881 46.8s
+step 196/256 reward_mean=3.312 std=0.137 skipped=None loss=-0.00039197690784931183 33.32s
+step 197/256 reward_mean=1.963 std=0.726 skipped=None loss=0.00024206191301345825 36.53s
+step 198/256 reward_mean=2.708 std=2.872 skipped=None loss=-0.004099361598491669 26.28s
+step 199/256 reward_mean=2.733 std=1.002 skipped=None loss=-0.0021561570465564728 47.05s
+step 200/256 reward_mean=4.600 std=0.000 skipped=None loss=8.878519378030525e-10 35.66s
+step 201/256 reward_mean=1.944 std=1.422 skipped=None loss=-0.023738421499729156 33.54s
+step 202/256 reward_mean=3.821 std=0.215 skipped=None loss=0.0017102733254432678 30.02s
+step 203/256 reward_mean=2.273 std=1.906 skipped=None loss=-0.00399360666051507 30.94s
+step 204/256 reward_mean=2.167 std=2.456 skipped=None loss=-0.0013761967420578003 46.31s
+step 205/256 reward_mean=1.933 std=1.820 skipped=None loss=-0.00180777907371521 34.56s
+step 206/256 reward_mean=3.825 std=1.083 skipped=None loss=-0.0015272796154022217 26.21s
+step 207/256 reward_mean=4.558 std=0.217 skipped=None loss=-0.000815078616142273 36.03s
+step 208/256 reward_mean=0.188 std=0.242 skipped=None loss=-0.0010718703269958496 34.5s
+step 209/256 reward_mean=3.496 std=0.768 skipped=None loss=0.006683635525405407 33.62s
+step 210/256 reward_mean=1.723 std=2.110 skipped=None loss=-0.0007987543940544128 28.62s
+step 211/256 reward_mean=4.871 std=0.165 skipped=None loss=-0.002560362219810486 30.33s
+step 212/256 reward_mean=0.812 std=0.496 skipped=None loss=0.004412714391946793 36.64s
+step 213/256 reward_mean=3.692 std=0.639 skipped=None loss=0.0009421370923519135 35.05s
+step 214/256 reward_mean=4.317 std=0.524 skipped=None loss=0.00016007199883460999 33.6s
+step 215/256 reward_mean=1.312 std=0.496 skipped=None loss=-7.759407162666321e-05 32.72s
+step 216/256 reward_mean=3.540 std=1.041 skipped=None loss=0.0011366680264472961 29.35s
+step 217/256 reward_mean=4.921 std=0.022 skipped=None loss=-0.0007456988096237183 39.79s
+step 218/256 reward_mean=4.933 std=0.000 skipped=zero_reward_variance loss=None 24.86s
+step 219/256 reward_mean=4.138 std=0.836 skipped=None loss=0.002139296382665634 39.69s
+step 220/256 reward_mean=2.500 std=0.000 skipped=zero_reward_variance loss=None 28.01s
+step 221/256 reward_mean=3.438 std=0.364 skipped=None loss=-0.0016130954027175903 31.26s
+step 222/256 reward_mean=3.367 std=1.559 skipped=None loss=0.0015672147274017334 30.24s
+step 223/256 reward_mean=1.396 std=1.686 skipped=None loss=-0.007102174684405327 34.31s
+step 224/256 reward_mean=3.683 std=0.666 skipped=None loss=0.0022414401173591614 39.64s
+step 225/256 reward_mean=1.008 std=2.594 skipped=None loss=-0.0020954981446266174 39.29s
+step 226/256 reward_mean=4.496 std=0.276 skipped=None loss=0.0036734268069267273 35.7s
+step 227/256 reward_mean=3.754 std=1.125 skipped=None loss=-6.945803761482239e-06 31.18s
+step 228/256 reward_mean=2.375 std=0.217 skipped=None loss=-0.0005149245262145996 34.7s
+step 229/256 reward_mean=2.327 std=1.057 skipped=None loss=-0.0011714790016412735 36.25s
+step 230/256 reward_mean=4.429 std=0.011 skipped=None loss=0.0018018633127212524 35.11s
+step 231/256 reward_mean=0.312 std=0.827 skipped=None loss=0.0018976200371980667 43.69s
+step 232/256 reward_mean=3.179 std=0.474 skipped=None loss=0.001806214451789856 29.14s
+step 233/256 reward_mean=1.967 std=2.339 skipped=None loss=-0.0008813329041004181 47.15s
+step 234/256 reward_mean=4.600 std=0.259 skipped=None loss=0.0007642433047294617 40.3s
+step 235/256 reward_mean=1.929 std=1.993 skipped=None loss=-0.0015850006602704525 38.49s
+step 236/256 reward_mean=2.750 std=0.919 skipped=None loss=0.0013387016952037811 44.78s
+step 237/256 reward_mean=2.000 std=0.000 skipped=zero_reward_variance loss=None 22.34s
+step 238/256 reward_mean=0.000 std=0.866 skipped=None loss=-0.005672633647918701 31.79s
+step 239/256 reward_mean=4.677 std=0.358 skipped=None loss=-0.00842873752117157 27.8s
+step 240/256 reward_mean=4.179 std=1.958 skipped=None loss=0.0031849294900894165 39.15s
+step 241/256 reward_mean=3.933 std=0.000 skipped=zero_reward_variance loss=None 14.11s
+step 242/256 reward_mean=4.462 std=0.277 skipped=None loss=-9.577721357345581e-06 58.92s
+step 243/256 reward_mean=4.050 std=0.335 skipped=None loss=-0.002517376095056534 39.39s
+step 244/256 reward_mean=0.312 std=0.556 skipped=None loss=-0.00039149820804595947 33.16s
+step 245/256 reward_mean=3.196 std=1.848 skipped=None loss=-0.002677515149116516 38.06s
+step 246/256 reward_mean=1.658 std=1.683 skipped=None loss=4.446785897016525e-05 40.42s
+step 247/256 reward_mean=2.454 std=2.233 skipped=None loss=-0.002956923097372055 36.24s
+step 248/256 reward_mean=0.796 std=1.381 skipped=None loss=2.2479332983493805e-05 31.99s
+step 249/256 reward_mean=4.292 std=0.547 skipped=None loss=1.7978250980377197e-05 32.63s
+step 250/256 reward_mean=1.750 std=0.250 skipped=None loss=0.002454720437526703 45.1s
+step 251/256 reward_mean=2.590 std=0.972 skipped=None loss=0.0026324978098273277 48.22s
+step 252/256 reward_mean=1.938 std=0.165 skipped=None loss=-0.0030750520527362823 21.89s
+step 253/256 reward_mean=3.967 std=0.967 skipped=None loss=0.0026741549372673035 24.13s
+step 254/256 reward_mean=3.233 std=1.185 skipped=None loss=0.0042175427079200745 29.9s
+step 255/256 reward_mean=4.183 std=0.354 skipped=None loss=-5.8770179748535156e-05 35.59s
+step 256/256 reward_mean=2.312 std=0.242 skipped=None loss=0.0037422925233840942 26.52s
+Saved final adapter to /workspace/runs/r2_gated_seed9/checkpoint-final/adapter
++ uv run --no-sync python scripts/evaluate_checkpoint.py --model-path /workspace/hf/hub/models--Qwen--Qwen2.5-7B-Instruct/snapshots/a09a35458c702b33eeacc393d103063234e8bc28 --adapter-path /workspace/runs/r2_gated_seed9/checkpoint-final/adapter --source /workspace/data/hotpot_dev_distractor_v1.json --output-dir /workspace/results/r2_gated_seed9 --name r2_gated_seed9
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.13it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.14it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.18it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.24it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.21it/s]
+1/300 completed
+2/300 failed
+3/300 completed
+4/300 completed
+5/300 completed
+6/300 completed
+7/300 completed
+8/300 completed
+9/300 completed
+10/300 completed
+11/300 completed
+12/300 completed
+13/300 completed
+14/300 completed
+15/300 completed
+16/300 completed
+17/300 completed
+18/300 completed
+19/300 completed
+20/300 completed
+21/300 completed
+22/300 completed
+23/300 completed
+24/300 failed
+25/300 completed
+26/300 completed
+27/300 completed
+28/300 completed
+29/300 completed
+30/300 failed
+31/300 completed
+32/300 completed
+33/300 completed
+34/300 completed
+35/300 completed
+36/300 completed
+37/300 completed
+38/300 completed
+39/300 completed
+40/300 completed
+41/300 completed
+42/300 completed
+43/300 failed
+44/300 completed
+45/300 completed
+46/300 completed
+47/300 completed
+48/300 completed
+49/300 completed
+50/300 completed
+51/300 completed
+52/300 completed
+53/300 completed
+54/300 completed
+55/300 completed
+56/300 completed
+57/300 completed
+58/300 completed
+59/300 completed
+60/300 completed
+61/300 completed
+62/300 completed
+63/300 failed
+64/300 completed
+65/300 completed
+66/300 completed
+67/300 completed
+68/300 completed
+69/300 completed
+70/300 completed
+71/300 completed
+72/300 completed
+73/300 completed
+74/300 completed
+75/300 completed
+76/300 completed
+77/300 completed
+78/300 completed
+79/300 completed
+80/300 completed
+81/300 completed
+82/300 completed
+83/300 completed
+84/300 completed
+85/300 completed
+86/300 failed
+87/300 completed
+88/300 completed
+89/300 completed
+90/300 completed
+91/300 completed
+92/300 completed
+93/300 completed
+94/300 completed
+95/300 completed
+96/300 completed
+97/300 completed
+98/300 completed
+99/300 completed
+100/300 completed
+101/300 completed
+102/300 completed
+103/300 completed
+104/300 failed
+105/300 completed
+106/300 completed
+107/300 completed
+108/300 completed
+109/300 completed
+110/300 completed
+111/300 completed
+112/300 completed
+113/300 completed
+114/300 completed
+115/300 completed
+116/300 completed
+117/300 completed
+118/300 completed
+119/300 failed
+120/300 completed
+121/300 completed
+122/300 completed
+123/300 completed
+124/300 completed
+125/300 completed
+126/300 completed
+127/300 completed
+128/300 completed
+129/300 completed
+130/300 completed
+131/300 completed
+132/300 completed
+133/300 completed
+134/300 completed
+135/300 failed
+136/300 completed
+137/300 completed
+138/300 completed
+139/300 completed
+140/300 completed
+141/300 completed
+142/300 completed
+143/300 completed
+144/300 completed
+145/300 completed
+146/300 completed
+147/300 completed
+148/300 failed
+149/300 completed
+150/300 completed
+151/300 completed
+152/300 completed
+153/300 completed
+154/300 completed
+155/300 completed
+156/300 completed
+157/300 completed
+158/300 completed
+159/300 completed
+160/300 completed
+161/300 completed
+162/300 failed
+163/300 completed
+164/300 completed
+165/300 completed
+166/300 completed
+167/300 completed
+168/300 completed
+169/300 completed
+170/300 completed
+171/300 completed
+172/300 completed
+173/300 completed
+174/300 completed
+175/300 completed
+176/300 completed
+177/300 completed
+178/300 completed
+179/300 completed
+180/300 completed
+181/300 completed
+182/300 failed
+183/300 completed
+184/300 completed
+185/300 completed
+186/300 completed
+187/300 completed
+188/300 completed
+189/300 completed
+190/300 completed
+191/300 failed
+192/300 completed
+193/300 completed
+194/300 completed
+195/300 completed
+196/300 completed
+197/300 completed
+198/300 completed
+199/300 completed
+200/300 completed
+201/300 completed
+202/300 completed
+203/300 completed
+204/300 completed
+205/300 completed
+206/300 completed
+207/300 completed
+208/300 completed
+209/300 completed
+210/300 completed
+211/300 completed
+212/300 completed
+213/300 completed
+214/300 completed
+215/300 completed
+216/300 completed
+217/300 completed
+218/300 completed
+219/300 completed
+220/300 completed
+221/300 completed
+222/300 completed
+223/300 completed
+224/300 completed
+225/300 completed
+226/300 completed
+227/300 completed
+228/300 completed
+229/300 completed
+230/300 completed
+231/300 completed
+232/300 completed
+233/300 completed
+234/300 completed
+235/300 completed
+236/300 completed
+237/300 completed
+238/300 completed
+239/300 completed
+240/300 completed
+241/300 completed
+242/300 completed
+243/300 completed
+244/300 completed
+245/300 completed
+246/300 completed
+247/300 completed
+248/300 completed
+249/300 completed
+250/300 completed
+251/300 completed
+252/300 completed
+253/300 completed
+254/300 completed
+255/300 completed
+256/300 completed
+257/300 completed
+258/300 completed
+259/300 completed
+260/300 completed
+261/300 completed
+262/300 completed
+263/300 completed
+264/300 failed
+265/300 completed
+266/300 completed
+267/300 completed
+268/300 completed
+269/300 completed
+270/300 completed
+271/300 completed
+272/300 completed
+273/300 completed
+274/300 completed
+275/300 completed
+276/300 completed
+277/300 completed
+278/300 completed
+279/300 completed
+280/300 completed
+281/300 completed
+282/300 completed
+283/300 completed
+284/300 completed
+285/300 completed
+286/300 completed
+287/300 completed
+288/300 completed
+289/300 completed
+290/300 completed
+291/300 completed
+292/300 completed
+293/300 completed
+294/300 completed
+295/300 completed
+296/300 completed
+297/300 completed
+298/300 completed
+299/300 completed
+300/300 completed
+{
+  "r2_gated_seed9": {
+    "n": 300,
+    "completed": 286,
+    "failed": 14,
+    "answer_exact_match_all_rows_fail_as_zero": 0.3833,
+    "answer_exact_match_completed_only": 0.4021,
+    "answer_f1_completed_only": 0.5519,
+    "evidence_coverage_completed_only": 0.4708,
+    "citation_precision_completed_only": 0.7022,
+    "retrieval_recall_completed_only": 0.8549,
+    "total_completed_only": 2.9045,
+    "mean_searches_completed_only": 2.1608
+  }
+}
++ echo 'RUN_DONE r2_gated_seed9 exit=0'
+RUN_DONE r2_gated_seed9 exit=0
++ echo BATCH_DONE
+BATCH_DONE

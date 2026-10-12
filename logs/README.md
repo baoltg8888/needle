@@ -2,6 +2,7 @@
 
 One file per session or experiment, named `YYYY-MM-DD-<topic>.md`, newest first below. Each entry records setup, exact config, results, interpretation, cost, and where the raw files are (`results/<date>-<topic>/`).
 
+- [2026-10-11 — Seed 9 + fixes batch (R3, R4, R0-dyn)](2026-10-11-fixes-batch.md) — 3 seeds for R0–R4. EM is the same for all (42–44%), but grounded EM is R1 32.7% vs. R0 8.2% (+24.4, CI [+20.9, +28.1]). The R0 shortcut replicates on s9. DAPO-style dynamic sampling raises EM to 48.7% but still cites nothing. Coverage ×2 raises coverage but lowers grounded EM; Dr. GRPO ≈ R1.
 - [2026-10-10 — R0/R1/R2 comparison batch](2026-10-10-r0-r1-r2-batch.md) — all rewards +18–26 EM over B0; R0 ≈ R1 on EM but R0 drops citations entirely (seed 8) or spams duplicate searches (seed 7); R2 vs R1 inconclusive.
 - [2026-10-10 — GRPO run 2 (256 q, G=8, lr 2e-5)](2026-10-10-grpo-run2.md) — holdout EM 22.3% → 42.7% (+20.3 pts, 95% CI [15.0, 25.7]); invalid episodes 43% → 4%.
 - [2026-10-10 — RunPod: local baseline + GRPO smoke run](2026-10-10-runpod-grpo-smoke.md) — B0 EM 22.3% → GRPO smoke 25.3% (all rows, noise-level); invalid episodes 130 → 108.
